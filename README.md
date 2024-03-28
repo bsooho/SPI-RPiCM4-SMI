@@ -61,7 +61,7 @@ sudo reboot
 # git clone
 
 
-git clone https://github.com/seantywork/SPI-RPiCM4-SMI.git
+git clone https://github.com/bsooho/SPI-RPiCM4-SMI.git
 
 
 # build
