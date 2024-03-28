@@ -39,7 +39,7 @@ fig = None
 interp = 8
 kron_kernel = np.ones((interp, interp), dtype = np.uint8)
 drange = 15.0
-image = np.zeros((30 * interp, 40 * interp), dtype = np.uint8)
+image = np.zeros((30 * interp, 40 * interp, 3), dtype = np.uint8)
 
 sig_surf1 = None
 sig_surf2 = None
@@ -188,9 +188,10 @@ while KEEP == True:
             bf_scale = ((bf_db + drange) / drange * 255).astype(np.uint8)
             bf_interp = np.kron(bf_scale, kron_kernel)
 
-            image[:, :] = bf_interp
-            #image[:, :, 1] = bf_interp
-            #image[:, :, 2] = bf_interp
+
+            image[:, :, 0] = bf_interp
+            image[:, :, 1] = bf_interp
+            image[:, :, 2] = bf_interp
 
 
             surf = pygame.surfarray.make_surface(image)

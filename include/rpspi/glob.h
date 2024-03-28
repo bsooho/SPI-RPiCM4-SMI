@@ -16,12 +16,21 @@
 // 성능의 저하가 일부 있을 수 있음
 #define VERSION_MINOR             2
 
+// export x25
+// 원래 25 사이클 당 한 번 export를 하게 되어 있으나
+// 이 설정을 켜면 1 사이클 당 한 번 export 함
+// 25 fps
+
+
+#define EXPORT_X25                1
+
 // export x5
 // 원래 25 사이클 당 한 번 export를 하게 되어 있으나
 // 이 설정을 켜면 5 사이클 당 한 번 export 함
-// 의미 있는 (1ms) 이상의 성능 저하는 아직 관찰하지 못했음
+// 5 fps
 
-#define EXPORT_X5                 1
+
+#define EXPORT_X5                 0
 
 // 아래의 정의는 기존 코드의
 // GLOBAL VARIABLE 설정을 따름
