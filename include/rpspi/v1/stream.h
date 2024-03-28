@@ -92,13 +92,19 @@ typedef struct GENERAL_VARIABLE {
     int cnt;
 
 
-
     uint8_t read_data[WL_TX_CMD_WRITE_MAX];
+
+
+// minor version 1 에서 쓰는 변수
+// dynamic allocation 사용
 
     uint8_t* rdata;
     int rdata_len;
     uint8_t* data0;
     int data0_len;
+
+// minor version 2 에서 쓰는 변수
+// dynamic allocation 사용 안 함
 
     uint8_t rdata2[EC_MAX_RDATA_LEN];
     int rdata2_len;
@@ -117,6 +123,9 @@ typedef struct GENERAL_VARIABLE {
 
 extern RS_CODE PSTAT;
 extern GENERAL_VARIABLE gv;
+
+
+// 로그 리포트 작성용
 
 extern int monitor_ptr;
 extern int monitor_interval_ms[100];
@@ -147,7 +156,13 @@ RS_CODE RS_stream_main();
 
 RS_CODE RS_init_spi(RS_SPI* spi, uint8_t mode, uint8_t bpw, uint32_t speed, uint16_t delay);
 
+// minor version 1 용
+// dynamic allocation
+
 void RS_gpio_interrupt_handler(int gpio, int level, uint32_t tick);
+
+// minor version 2 용
+// dynamic allocation 안 씀
 
 void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick);
 
@@ -160,10 +175,16 @@ RS_CODE RS_spi_xfer(RS_SPI* spi, uint32_t tx_len, uint32_t rx_len);
 
 RS_CODE RS_set_spi_tx_from_read_cmd(GENERAL_VARIABLE* gv, uint32_t tx_len);
 
+// minor version 1
+
 RS_CODE RS_get_data0_from_spi_rx(GENERAL_VARIABLE* gv, uint32_t rx_len);
+
+// minor version 2
 
 RS_CODE RS_get_data02_from_spi_rx(GENERAL_VARIABLE* gv, uint32_t rx_len);
 
+
+// 함수 이름에 아래처럼 aux 가 들어가 있으면 spi1 으로 통신함
 
 RS_CODE RS_set_aux_tx_from_read_cmd(GENERAL_VARIABLE* gv, uint32_t tx_len);
 
@@ -176,6 +197,8 @@ RS_CODE RS_spi_xfer_write(RS_SPI* spi);
 
 RS_CODE RS_spi_xfer_read(RS_SPI* spi);
 
+
+// minor version 1 에서만 사용
 
 RS_CODE RS_buffalloc(uint8_t** buff, uint32_t old_len, uint32_t new_len);
 

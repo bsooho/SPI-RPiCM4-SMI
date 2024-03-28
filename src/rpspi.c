@@ -11,6 +11,10 @@ int spi_open(char *device, spi_config_t config) {
         return fd;
     }
 
+// Bits per word 설정에 따라
+// 달라져야 하는 것으로 파악되어 매크로로 구분
+
+
 #if SPI_BPW == 8
 
     /* Set SPI_POL and SPI_PHA */
@@ -69,6 +73,7 @@ int spi_xfer(int fd, uint8_t *tx_buffer, uint8_t tx_len, uint8_t *rx_buffer, uin
     
     return ioctl(fd, SPI_IOC_MESSAGE(1), spi_message);
 }
+
 
 
 int spi_xfer2(int fd, uint8_t *tx_buffer, uint32_t tx_len, uint8_t *rx_buffer, uint32_t rx_len){

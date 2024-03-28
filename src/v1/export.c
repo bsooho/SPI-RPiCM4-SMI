@@ -6,6 +6,12 @@ EXPORT_CONTROL ec;
 
 uint8_t flag_set[FLAG_SET] = {0};
 
+
+
+// 시작할 때 생성되는 
+// exporter 스레드
+
+
 RS_CODE RS_export_main(pthread_t *tid, pthread_mutex_t *tmtx){
 
 
@@ -21,6 +27,9 @@ RS_CODE RS_export_main(pthread_t *tid, pthread_mutex_t *tmtx){
     return RS_OKAY;
 }
 
+
+// minor version 1
+// copy
 
 RS_CODE RS_rdata_export(){
 
@@ -50,6 +59,9 @@ RS_CODE RS_rdata_export(){
 }
 
 
+// minor version 2
+// copy
+
 RS_CODE RS_rdata2_export(){
 
 
@@ -77,6 +89,11 @@ RS_CODE RS_rdata2_export(){
     return RS_OKAY;
 }
 
+
+// 이 부분을 남겨둘 필요가 없음
+// 리팩터링시 제거 대상 1 순위
+// 처음 copy 하는 부분만
+// 매크로로 처리 하면 될 듯
 
 RS_CODE RS_interpret_rdata_export(){
 
@@ -249,7 +266,7 @@ RS_CODE RS_interpret_rdata_export(){
 }
 
 
-
+// minor version 2
 
 RS_CODE RS_interpret_rdata2_export(){
 
@@ -425,6 +442,9 @@ RS_CODE RS_interpret_rdata2_export(){
     return RS_OKAY;
 }
 
+
+
+// 소켓 스레드
 
 void* RS_export_controller(void* targ){
 

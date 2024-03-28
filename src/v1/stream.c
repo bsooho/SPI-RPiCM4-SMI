@@ -57,7 +57,6 @@ RS_CODE RS_stream_main(){
 
 
 
-
     rs_result = RS_init_spi(&gv.spi0, SPI_MODE, SPI_BPW, SPI0_SPEED, SPI_DELAY);
 
     if (rs_result != RS_OKAY){
@@ -94,6 +93,11 @@ RS_CODE RS_stream_main(){
     gpioWrite(GPIO_SPI_RESET_N, PI_HIGH);
 
     RS_msleep(100);
+
+
+    // 이 부분에서 
+    // 원래 코드와 동일하게
+    // spi1 관련 통신 진행함
 
 
     rs_result = RS_register_spi1();
@@ -190,15 +194,30 @@ RS_CODE RS_stream_main(){
 
     gpioSetMode(GPIO_NEW_BF_DATA, PI_INPUT);
 
+// minor version 1은 
+// dynamic allocation 활용하므로
+// 약간이나마 성능 저하 있을 수 있음
+
+// minor version 2는
+// dynamic allocation 사용 하지 않음
+
 #if VERSION_MINOR == 1
 
     gpioSetAlertFunc(GPIO_NEW_BF_DATA, RS_gpio_interrupt_handler);
+
+
 
 #elif VERSION_MINOR == 2
 
     gpioSetAlertFunc(GPIO_NEW_BF_DATA, RS_gpio_interrupt_handler2);
 
 #endif
+
+
+
+// 원래 코드에서는 여기서 플래그에 따라
+// 렌더링을 처리 하였으나
+// 변경된 현재 구조에서는 단순히 상태 체크만 하고 루프
 
     while(1){
 
@@ -226,6 +245,10 @@ RS_CODE RS_stream_main(){
 }
 
 
+
+
+// spidev 을 사용하기 위해
+// fd 확보 및 설정 적용함
 
 RS_CODE RS_init_spi(RS_SPI* spi, uint8_t mode, uint8_t bpw, uint32_t speed, uint16_t delay){
     
@@ -255,6 +278,11 @@ RS_CODE RS_init_spi(RS_SPI* spi, uint8_t mode, uint8_t bpw, uint32_t speed, uint
 
 
 
+
+// 40ms 마다 들어오는 RISING 신호 처리를 위한 인터럽트 로직
+// minor version 1
+// dynamic allocation 사용
+// minor version 2 대비 성능 저하 약간 있을 수 있음
 
 void RS_gpio_interrupt_handler(int gpio, int level, uint32_t tick){
 
@@ -369,6 +397,10 @@ void RS_gpio_interrupt_handler(int gpio, int level, uint32_t tick){
 
         gv.cnt = 0;
 
+
+        // 여기서 비트 연산으로 데이터를 정리하고
+        // 렌더링 플래그를 표시
+
         //rs_res = RS_interpret_rdata_general();
 
         rs_res = RS_interpret_rdata_export();
@@ -469,7 +501,9 @@ void RS_gpio_interrupt_handler(int gpio, int level, uint32_t tick){
 
 
 
-
+// 인터럽트 핸들
+// minor version 2
+// 아마도 최대 성능
 
 void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 
@@ -590,6 +624,10 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 
         }
 
+
+        // 여기서 비트 연산으로 데이터를 정리하고
+        // 렌더링 플래그를 표시
+
         //rs_res = RS_interpret_rdata_general();
 
         rs_res = RS_interpret_rdata2_export();
@@ -621,6 +659,9 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
         printf("gpio: %d, level: %d\n", gpio, level);
 
         gv.cnt = 0;
+
+        // 여기서 비트 연산으로 데이터를 정리하고
+        // 렌더링 플래그를 표시
 
         //rs_res = RS_interpret_rdata_general();
 
