@@ -609,8 +609,45 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 #endif
     // 25 * 40ms == 1s
 
+#if EXPORT_X25
 
-#if EXPORT_X5 
+
+    printf("gv.cnt: %d\n", gv.cnt);
+    printf("gpio: %d, level: %d\n", gpio, level);
+
+    if(gv.cnt == 25){
+
+        gv.cnt = 0;
+
+    }
+
+
+    // 여기서 비트 연산으로 데이터를 정리하고
+    // 렌더링 플래그를 표시
+
+    //rs_res = RS_interpret_rdata_general();
+
+    rs_res = RS_interpret_rdata2_export();
+
+    if (rs_res != RS_OKAY){
+
+        RS_log_println("failed RS_rdata_interpreter");
+
+        PSTAT = RS_FAIL;
+
+        return;
+    }
+
+
+    gv.data02_len = 0;
+    gv.rdata2_len = 0;
+
+    memset(gv.rdata2, 0, EC_MAX_RDATA_LEN * sizeof(uint8_t));
+    memset(gv.data02, 0 ,GV_PKT_BYTE_LEN_MAX * sizeof(uint8_t)); 
+
+
+
+#elif EXPORT_X5 
 
 
     if ((gv.cnt % 5) == 0){
