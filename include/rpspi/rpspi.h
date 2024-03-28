@@ -76,6 +76,12 @@ extern pthread_mutex_t tmtx;
 */
 
 
+// 아래에서
+// spi_open
+// spi_close
+// spi_xfer2
+// 말고는 현재 안씀
+
 int spi_open(char *device, spi_config_t config);
 int spi_close(int fd);
 int spi_xfer(int fd, uint8_t *tx_buffer, uint8_t tx_len, uint8_t *rx_buffer, uint8_t rx_len);

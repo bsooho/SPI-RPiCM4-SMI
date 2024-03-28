@@ -10,6 +10,8 @@ pthread_mutex_t tmtx;
 int main (int argc, char **argv){
 
 
+    // cpu core 2 개 할당
+
     cpu_set_t  mask;
 
     
@@ -20,6 +22,9 @@ int main (int argc, char **argv){
     // result = sched_setaffinity(1, sizeof(mask), &mask);
 
 
+    // export 스레드를 생성하고
+    // 지정한 unix domain 소켓에서 클라이언트가 데이터 요청 및
+    // 응답 받을 수 있도록 함
 
 
     RS_CODE rs_res;
@@ -35,6 +40,7 @@ int main (int argc, char **argv){
         return -1;
     }
 
+    // 대기하다가 커넥션 실패하면 종료함
 
     int i;
     int retry = WAIT_TIMEOUT / WAIT_INTERVAL_MS;
@@ -64,6 +70,8 @@ int main (int argc, char **argv){
 
 
 
+    // streamer 를 시작
+    // FPGA 측에서 데이터 수집하여 정리
 
 
     rs_res = RS_stream_main();

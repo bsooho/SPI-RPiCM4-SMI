@@ -1,6 +1,6 @@
 #include "rpspi/v1/stream.h"
 
-#include "rpspi/v1/utils/stream_utils.h"
+#include "rpspi/v1/utils.h"
 
 
 
