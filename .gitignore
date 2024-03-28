@@ -1,0 +1,10 @@
+*.run
+*.o
+*.test
+myenv
+.vscode
+log/log.txt
+log/sock.txt
+pigpio-master
+master.zip
+__pycache__
