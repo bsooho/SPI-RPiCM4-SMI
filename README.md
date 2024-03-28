@@ -1,10 +1,10 @@
 # SPI-RPiCM4-SMI
 
 
-[Architecture](#architecture)
-[Requirements](#requirements)
-[How to run](#how-to-run)
-[Notes](#notes)
+[Architecture](#architecture)\
+[Requirements](#requirements)\
+[How to run](#how-to-run)\
+[Notes](#notes)\
 [Datasheet](#datasheet)
 
 ## Architecture
