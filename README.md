@@ -33,7 +33,7 @@ streamer 가 수집, 가공한 데이터를 외부 소켓 클라이언트에게 
 
 ## Requirements
 
-- Raspberry Pi 4B
+- Raspberry Pi CM4 (Compute Module 4)
 - Raspberry Pi OS (Legacy, 32-bit)
 - git
 - build-essential, make
