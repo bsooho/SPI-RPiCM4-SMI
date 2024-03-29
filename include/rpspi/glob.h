@@ -16,13 +16,13 @@
 // 성능의 저하가 일부 있을 수 있음
 #define VERSION_MINOR             2
 
-// export x25
+// export all
 // 원래 25 사이클 당 한 번 export를 하게 되어 있으나
 // 이 설정을 켜면 1 사이클 당 한 번 export 함
 // 25 fps
 
 
-#define EXPORT_X25                1
+#define EXPORT_ALL                1
 
 // export x5
 // 원래 25 사이클 당 한 번 export를 하게 되어 있으나
@@ -36,7 +36,7 @@
 // GLOBAL VARIABLE 설정을 따름
 
 
-#define GV_CMD_TYPE               1
+#define GV_CMD_TYPE               3
 #define GV_PKT_BYTE_LEN_MAX       4095
 #define GV_IS_SET_BPF             1
 #define GV_IS_IIR_COEF_20_30      0
@@ -165,7 +165,10 @@
 
 */
 
-#define MAX_EXPORT_BYTE_LEN 131072
+// cmd type 3 최대 138496 byte
+// ( 1200 + 112 + 8000 + 8000 ) * 8
+
+#define MAX_EXPORT_BYTE_LEN 140000 
 
 /*
 

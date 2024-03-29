@@ -78,6 +78,8 @@ void RS_log_txtln(char* log){
     fputs(log_str, fp);
 
     fflush(fp);
+
+    fclose(fp);
 }
 
 
@@ -88,6 +90,13 @@ void RS_log_sockln(char* log){
     return;
 
 #endif 
+
+#if EXPORT_ALL == 1 && GV_CMD_TYPE == 3
+
+
+    return;
+
+#endif
 
     char log_str[MAX_LOG_TXT_LEN] = {0};
 
@@ -102,6 +111,8 @@ void RS_log_sockln(char* log){
     fputs(log_str, fp);
 
     fflush(fp);
+
+    fclose(fp);
 }
 
 

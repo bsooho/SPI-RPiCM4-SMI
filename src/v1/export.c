@@ -434,6 +434,77 @@ RS_CODE RS_interpret_rdata2_export(){
         }
 
 
+    } else if (gv.CMD_TYPE == 3){
+
+        int rn = 29;
+        int cn = 0;
+
+        for (int k = 0; k < BF_DATA_LEN; k++){
+
+            double tmp = (double)(((ec.rdata_ex[k*6+6]) << 40) | ((ec.rdata_ex[k*6+7]) << 32) | ((ec.rdata_ex[k*6+8]) << 24) | ((ec.rdata_ex[k*6+9]) << 16) | ((ec.rdata_ex[k*6+10]) << 8) | ec.rdata_ex[k*6+11]);
+
+            ec.bf_data_ex[rn][cn] = tmp;
+
+            rn = rn - 1;
+
+            if (rn == -1){
+
+                rn = 29;
+                cn = cn + 1;
+            }
+        }
+
+
+        for (int k = 0 ; k < RMS_DATA; k++){
+
+
+            double tmp = (double)(((ec.rdata_ex[k*6+7206]) << 40) | ((ec.rdata_ex[k*6+7207]) << 32) | ((ec.rdata_ex[k*6+7208]) << 24) | ((ec.rdata_ex[k*6+7209]) << 16) | ((ec.rdata_ex[k*6+7210]) << 8) | ec.rdata_ex[k*6+7211]);
+
+
+            ec.rms_data_ex[k] = tmp;
+
+        }
+
+        if(csum_check == TRUE){
+
+            ec.flag_bf_ex = 1;
+
+            flag_set[0] = 1;
+        
+        }
+
+
+        for (int k = 0; k < MIC_DATA; k++){
+
+            double tmp = (double)(((ec.rdata_ex[k*6+6]) << 16) | ((ec.rdata_ex[k*6+7]) << 8) | ec.rdata_ex[k*6+8]);
+
+            if (tmp >= POW_2_23D) {
+                tmp = tmp - POW_2_24D;
+            }
+
+            ec.mic_data_ex[k] = tmp;
+
+            tmp = (double)(((ec.rdata_ex[k*6+9]) << 16) | ((ec.rdata_ex[k*6+10]) << 8) | ec.rdata_ex[k*6+11]);
+
+            if (tmp >= POW_2_23D) {
+                tmp = tmp - POW_2_24D;
+            }
+
+            ec.bf_mic_data_ex[k] = tmp;
+
+
+        }
+
+        if (csum_check == TRUE){
+            ec.flag_mic_ex = 1;
+
+            flag_set[1] = 1;
+        }
+
+
+        if(flag_set[0] == 1 && flag_set[1] == 1){
+            flag_set[2] = 1;
+        }
 
     }
 
@@ -655,6 +726,50 @@ RS_CODE RS_process_request(){
 
             RS_log_sockln("resp written");
 
+        } else if(strcmp(CMD, "3") == 0){
+
+            RS_log_sockln("CMD: 3");
+
+            uint32_t resp_len = 0;
+
+            // uint8_t response[EC_MAX_RDATA_LEN] = {0};
+
+            double response[MAX_EXPORT_BYTE_LEN] = {0};
+
+            // rs_res = RS_response_rdata_raw(&resp_len, response);
+
+            rs_res = RS_response_by_flag_set(&resp_len, response);
+
+            if(rs_res != RS_OKAY){
+
+                RS_log_sockln("cmd type 3 response");
+
+                return RS_OKAY;
+
+            }
+
+            char len_str[64] = {0};
+            sprintf(len_str, "resp_len: %d", resp_len);
+
+            RS_log_sockln(len_str);
+
+            val_write = write(ec.client_fd, response, resp_len * sizeof(double));
+
+            memset(len_str, 0, 64 * sizeof(char));
+
+            sprintf(len_str, "val_write: %d", val_write);
+
+            RS_log_sockln(len_str);            
+
+            if(val_write <=0){
+
+                RS_log_sockln("val_write <= 0");
+
+                return RS_OKAY;
+            }
+
+            RS_log_sockln("resp written");
+
         } else {
 
             RS_log_sockln("invalid cmd");
@@ -715,6 +830,8 @@ RS_CODE RS_response_by_flag_set(uint32_t* resp_len, double* response){
 
     memcpy(flag_set_local, flag_set, FLAG_SET * sizeof(uint8_t));
 
+
+
     if(flag_set_local[0] == 1){
 
         // bf data
@@ -769,6 +886,8 @@ RS_CODE RS_response_by_flag_set(uint32_t* resp_len, double* response){
 
 
     }
+
+
 
 
     int val_write = write(ec.client_fd, flag_set_local, FLAG_SET * sizeof(uint8_t));
