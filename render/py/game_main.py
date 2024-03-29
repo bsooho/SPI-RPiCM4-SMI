@@ -98,9 +98,27 @@ while KEEP == True:
 
             print(flag_set_arr)
 
-            response = client.recv(GLOB.CMD_TYPE_1_BYTE_LEN)
 
-            print(len(response))
+            total_recv_len = 0
+
+            response = b''        
+
+            while total_recv_len != GLOB.CMD_TYPE_1_BYTE_LEN:
+
+
+                resp = client.recv(GLOB.CMD_TYPE_1_BYTE_LEN)
+
+                print(len(resp))
+
+
+                response_bytes_len = len(resp)
+
+                total_recv_len += response_bytes_len
+
+                response += resp
+
+
+            print(total_recv_len)
 
             if flag_set_arr[0] != 1 :
 
@@ -117,28 +135,6 @@ while KEEP == True:
             data_raw = []
 
 
-            response_bytes_len = len(response)
-
-            if response_bytes_len != GLOB.CMD_TYPE_1_BYTE_LEN :
-
-                print("invalid byte length: " + str(response_bytes_len))
-
-                tmp_byte = GLOB.CMD_TYPE_1_BYTE_LEN - response_bytes_len
-
-                tmp_response = client.recv(tmp_byte)
-
-                print("tmp byte: "+str(tmp_byte))
-                print("tmp response: " + str(len(tmp_response)))
-
-                if(len(tmp_response) != tmp_byte):
-                    
-                    print("failed reading, reconnect")
-
-                    client.close()
-
-                    break
-
-                continue
 
 
             for i in range(GLOB.CMD_TYPE_1_LEN):
@@ -276,9 +272,30 @@ while KEEP == True:
 
             print(flag_set_arr)
 
-            response = client.recv(GLOB.CMD_TYPE_2_BYTE_LEN)
 
-            print(len(response))
+            total_recv_len = 0
+
+            response = b''        
+
+            while total_recv_len != GLOB.CMD_TYPE_2_BYTE_LEN:
+
+
+                resp = client.recv(GLOB.CMD_TYPE_2_BYTE_LEN)
+
+                print(len(resp))
+
+
+                response_bytes_len = len(resp)
+
+                total_recv_len += response_bytes_len
+
+                response += resp
+
+
+            print(total_recv_len)
+
+
+
 
             if flag_set_arr[1] != 1 :
 
@@ -289,34 +306,14 @@ while KEEP == True:
             # render_plot = render.cmd_type_1(response, render_plot)
 
 
+
+
             print("cmd_type_2")
 
 
             data_raw = []
 
 
-            response_bytes_len = len(response)
-
-            if response_bytes_len != GLOB.CMD_TYPE_2_BYTE_LEN :
-
-                print("invalid byte length: " + str(response_bytes_len))
-
-                tmp_byte = GLOB.CMD_TYPE_2_BYTE_LEN - response_bytes_len
-
-                tmp_response = client.recv(tmp_byte)
-
-                print("tmp byte: "+str(tmp_byte))
-                print("tmp response: " + str(len(tmp_response)))
-
-                if(len(tmp_response) != tmp_byte):
-                    
-                    print("failed reading, reconnect")
-
-                    client.close()
-
-                    break
-
-                continue
 
             for i in range(GLOB.CMD_TYPE_2_LEN):
 
@@ -382,6 +379,108 @@ while KEEP == True:
 
 
             pygame.display.update()
+
+
+
+        if GLOB.CMD_TYPE == 3:
+
+
+            message = "3"
+
+            client.sendall(message.encode())
+
+            flag_set_byte = client.recv(GLOB.FLAG_SET_BYTE)
+
+            flag_set_arr = [ x for x in flag_set_byte ]
+
+            print(flag_set_arr)
+
+            total_recv_len = 0
+
+            response = b''        
+
+            while total_recv_len != GLOB.CMD_TYPE_3_BYTE_LEN:
+
+
+                resp = client.recv(GLOB.CMD_TYPE_3_BYTE_LEN)
+
+                print(len(resp))
+
+
+                response_bytes_len = len(resp)
+
+                total_recv_len += response_bytes_len
+
+                response += resp
+
+
+            print(total_recv_len)
+
+            if flag_set_arr[2] != 1 :
+
+                print("invalid flag")
+
+                continue
+
+            # render_plot = render.cmd_type_1(response, render_plot)
+
+
+            print("cmd_type_3")
+
+
+            data_raw = []
+
+
+
+            for i in range(GLOB.CMD_TYPE_3_LEN):
+
+                start_index = i * GLOB.DOUBLE_T
+                end_index = start_index + GLOB.DOUBLE_T
+
+                value_double = struct.unpack("d", response[start_index:end_index])[0]
+
+                data_raw.append(value_double)
+            
+
+            print(len(data_raw))
+
+            i = 0
+
+            for x in range(GLOB.BF_DATA_X):
+
+                for y in range(GLOB.BF_DATA_Y):
+
+                    bf_data[x][y] = data_raw[i]
+
+                    i += 1       
+
+            
+
+            for x in range(GLOB.RMS_DATA):
+
+                rms_data[x] = data_raw[i]
+
+                i += 1
+
+
+            for x in range(GLOB.MIC_DATA):
+
+                mic_data[x] = data_raw[i]
+
+                i += 1       
+
+            
+
+            for x in range(GLOB.BF_MIC_DATA):
+
+                bf_mic_data[x] = data_raw[i]
+
+                i += 1
+
+
+            print("handled cmd_type_3")
+
+            time.sleep(0.05)
 
 
         for i in pygame.event.get():

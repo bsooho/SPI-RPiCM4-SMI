@@ -1,7 +1,7 @@
 
 
 
-GCC_FLAGS := -Ofast -Wall
+GCC_FLAGS := -Ofast -Wall 
 
 GCC_OBJ_FLAGS := -Ofast -Wall -c
 

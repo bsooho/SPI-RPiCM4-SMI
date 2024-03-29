@@ -609,7 +609,7 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 #endif
     // 25 * 40ms == 1s
 
-#if EXPORT_X25
+#if EXPORT_ALL
 
 
     printf("gv.cnt: %d\n", gv.cnt);
