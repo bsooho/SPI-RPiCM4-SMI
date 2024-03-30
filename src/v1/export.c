@@ -634,6 +634,8 @@ RS_CODE RS_process_request(){
 
             RS_log_sockln("val_read <= 0");
 
+            close(ec.client_fd);
+
             return RS_OKAY;
         }
 
@@ -660,6 +662,11 @@ RS_CODE RS_process_request(){
 
             }
 
+            if(resp_len != CMD_TYPE_1_LEN){
+                RS_log_sockln("data not ready, continue");
+                continue;
+            }
+
             char len_str[64] = {0};
             sprintf(len_str, "resp_len: %d", resp_len);
 
@@ -676,6 +683,8 @@ RS_CODE RS_process_request(){
             if(val_write <=0){
 
                 RS_log_sockln("val_write <= 0");
+
+                close(ec.client_fd);
 
                 return RS_OKAY;
             }
@@ -704,6 +713,11 @@ RS_CODE RS_process_request(){
 
             }
 
+            if(resp_len != CMD_TYPE_2_LEN){
+                RS_log_sockln("data not ready, continue");
+                continue;
+            }
+
             char len_str[64] = {0};
             sprintf(len_str, "resp_len: %d", resp_len);
 
@@ -720,6 +734,8 @@ RS_CODE RS_process_request(){
             if(val_write <=0){
 
                 RS_log_sockln("val_write <= 0");
+
+                close(ec.client_fd);
 
                 return RS_OKAY;
             }
@@ -748,6 +764,11 @@ RS_CODE RS_process_request(){
 
             }
 
+            if(resp_len != CMD_TYPE_3_LEN){
+                RS_log_sockln("data not ready, continue");
+                continue;
+            }
+
             char len_str[64] = {0};
             sprintf(len_str, "resp_len: %d", resp_len);
 
@@ -764,6 +785,8 @@ RS_CODE RS_process_request(){
             if(val_write <=0){
 
                 RS_log_sockln("val_write <= 0");
+
+                close(ec.client_fd);
 
                 return RS_OKAY;
             }
@@ -895,6 +918,8 @@ RS_CODE RS_response_by_flag_set(uint32_t* resp_len, double* response){
     if(val_write <= 0){
 
         RS_log_sockln("failed to send flag set");
+
+        close(ec.client_fd);
 
         pthread_mutex_unlock(&tmtx);
 

@@ -97,6 +97,7 @@
 #define WAIT_TIMEOUT 10000
 #define WAIT_INTERVAL_MS 100
 #define SOCK_MAX_CONN 5
+#define DOUBLE_T      8
 
 // export 할 때
 // CMD_TYPE 0, 1, 2, 3
@@ -169,6 +170,15 @@
 // ( 1200 + 112 + 8000 + 8000 ) * 8
 
 #define MAX_EXPORT_BYTE_LEN 140000 
+
+#define CMD_TYPE_1_LEN         BF_DATA_LEN + RMS_DATA
+#define CMD_TYPE_1_BYTE_LEN    CMD_TYPE_1_LEN * DOUBLE_T
+
+#define CMD_TYPE_2_LEN         MIC_DATA + BF_MIC_DATA
+#define CMD_TYPE_2_BYTE_LEN    CMD_TYPE_2_LEN * DOUBLE_T
+
+#define CMD_TYPE_3_LEN         BF_DATA_LEN + RMS_DATA + MIC_DATA + BF_MIC_DATA
+#define CMD_TYPE_3_BYTE_LEN    CMD_TYPE_3_LEN * DOUBLE_T
 
 /*
 
