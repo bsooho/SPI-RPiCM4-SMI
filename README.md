@@ -174,16 +174,9 @@ RESPONSE:
 socket_path = GLOB.EXPORT_SOCK_PATH
 
 
-# 연결
-
-client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-client.connect(socket_path)
-
-
-print("connected to export socket")
-
 while KEEP == True:
+
+    # 연결
 
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
