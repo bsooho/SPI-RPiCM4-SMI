@@ -384,6 +384,9 @@ spi_xfer2 (송수신)
 ## Datasheet
 
 
+
+### force_turbo
+
 아래는 force_turbo 미적용, 적용 시의 테스트 결과임
 이는 doc/c-test-noft.txt 및 doc/c-test-ft.txt 에서 확인 가능 함
 
@@ -435,7 +438,40 @@ log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 
 
 ```
 
+### force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, NO RENDERING
+
+아래는 force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, 그리고 파이썬 쪽에서 렌더링 없이 데이터를 \
+읽어가기만 할 경우의 테스트 결과임
+
+```shell
+
+[ 2024-03-29 09:11:08.886 ] total ge40ms   : 19 / 10000 
+[ 2024-03-29 09:11:08.886 ] total ge35ms   : 119 / 10000 
+[ 2024-03-29 09:11:08.886 ] total csum_fail: 0 / 10000 
+```
 
 
+- reproduce 하는 법
 
+```shell
+
+make clean
+
+
+# CMD_TYPE = 3
+# SPI_BPW = 32
+# SPI0_SPEED = 24995000 
+# EXPORT_ ALL = 1
+# VERSION_MINOR = 2
+
+make v1
+
+
+변경 뒤 리부트 하고
+
+sudo ./v1.run
+
+log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 찍히는 것 확인
+
+```
 
