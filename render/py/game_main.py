@@ -17,9 +17,12 @@ import pygame
 
 pygame.init()
 
+# unix 소켓 연결을 위한 소켓 경로 지정
 
-socket_path = "/tmp/fpga_stream_export.sock"
+socket_path = GLOB.EXPORT_SOCK_PATH
 
+
+# 연결
 
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
@@ -88,9 +91,21 @@ while KEEP == True:
         if GLOB.CMD_TYPE == 1:
 
 
+            # CMD_TYPE 1에 맞는 데이터 수신을 위해
+            # 1 을 전송함
+
             message = "1"
 
             client.sendall(message.encode())
+
+            # 수신 시
+            # 4 byte를 우선적으로 읽어서
+            # 데이터가 준비 되었는지 확인
+            # CMD_TYPE == 1 일 때
+            # [ 1, x, x, x]
+            # 을 수신 하면 성공
+
+
 
             flag_set_byte = client.recv(GLOB.FLAG_SET_BYTE)
 
@@ -98,10 +113,24 @@ while KEEP == True:
 
             print(flag_set_arr)
 
+            # index 0 이 1 이 아니면 continue
+
+            if flag_set_arr[0] != 1 :
+
+                print("invalid flag")
+
+                continue
+
+
+            # 1 이면 
+            # CMD_TYPE_1_BYTE_LEN
+            # 을 만족할때 까지 read 하면 됨
 
             total_recv_len = 0
 
             response = b''        
+
+
 
             while total_recv_len != GLOB.CMD_TYPE_1_BYTE_LEN:
 
@@ -120,11 +149,6 @@ while KEEP == True:
 
             print(total_recv_len)
 
-            if flag_set_arr[0] != 1 :
-
-                print("invalid flag")
-
-                continue
 
             # render_plot = render.cmd_type_1(response, render_plot)
 
@@ -262,9 +286,17 @@ while KEEP == True:
         if GLOB.CMD_TYPE == 2:
 
 
+            # CMD_TPYE 2는 
+            # 2 를 전송하면 됨
+
             message = "2"
 
             client.sendall(message.encode())
+
+
+            # 4 byte 를 우선 읽어서
+            # [x, 1, x, x]
+            # 이면 성공
 
             flag_set_byte = client.recv(GLOB.FLAG_SET_BYTE)
 
@@ -272,6 +304,17 @@ while KEEP == True:
 
             print(flag_set_arr)
 
+
+            # index 1 이 1 이 아니면 continue
+
+            if flag_set_arr[1] != 1 :
+
+                print("invalid flag")
+
+                continue
+
+            # 1 이면 CMD_TYPE_2_BYTE_LEN 을
+            # 만족할 때까지 read 하면 됨
 
             total_recv_len = 0
 
@@ -295,13 +338,6 @@ while KEEP == True:
             print(total_recv_len)
 
 
-
-
-            if flag_set_arr[1] != 1 :
-
-                print("invalid flag")
-
-                continue
 
             # render_plot = render.cmd_type_1(response, render_plot)
 
@@ -385,15 +421,36 @@ while KEEP == True:
         if GLOB.CMD_TYPE == 3:
 
 
+            # CMD_TYPE 3 는
+            # 3을 전송하면 됨
+
             message = "3"
 
             client.sendall(message.encode())
+
+
+            # 4 byte 우선 읽고
+            # [ x, x, 1, x]
+            #  이면 성공
 
             flag_set_byte = client.recv(GLOB.FLAG_SET_BYTE)
 
             flag_set_arr = [ x for x in flag_set_byte ]
 
             print(flag_set_arr)
+
+
+            # index 2 가 1 이 아니면 continue
+
+            if flag_set_arr[2] != 1 :
+
+                print("invalid flag")
+
+                continue
+
+            # 맞으면
+            # CMD_TYPE_3_BYTE_LEN 을 만족할 때까지
+            # read 하면 됨
 
             total_recv_len = 0
 
@@ -416,11 +473,6 @@ while KEEP == True:
 
             print(total_recv_len)
 
-            if flag_set_arr[2] != 1 :
-
-                print("invalid flag")
-
-                continue
 
             # render_plot = render.cmd_type_1(response, render_plot)
 
@@ -480,7 +532,7 @@ while KEEP == True:
 
             print("handled cmd_type_3")
 
-            time.sleep(0.05)
+            time.sleep(0.04)
 
 
         for i in pygame.event.get():

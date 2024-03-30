@@ -4,6 +4,7 @@
 [Architecture](#architecture)\
 [Requirements](#requirements)\
 [How to run](#how-to-run)\
+[Socket Export Protocol](#socket-export-protocol)\
 [Notes](#notes)\
 [Datasheet](#datasheet)
 
@@ -101,6 +102,228 @@ python main.py
 
 
 ```
+
+
+## Socket Export Protocol
+
+
+클라이언트는(ex: render/py/game_main.py)\
+기본적으로 unix domain socket 에 데이터를 요청하고\
+데이터가 준비 되었는지 확인한 뒤\
+해당 데이터 길이만큼을 읽어 들이도록 함
+
+디폴트 socket 위치는 다음과 같음
+
+```shell
+
+/tmp/fpga_stream_export.sock
+
+```
+
+이는
+
+- include/rpspi/glob.h (서버 측)
+- render/py/GLOB.py (클라이언트 측)
+  
+에서 각각 수정할 수 있음
+
+
+### Definition
+
+```shell
+
+REQUEST:
+    << [1] : 1 byte, char
+            [1, 2, 3] 중 하나의 값
+            CMD_TYPE == 1 은 1
+            CMD_TYPE == 2 는 2
+            CMD_TYPE == 3 은 3
+
+RESPONSE:
+
+    >> [4] : 4 byte, int
+            예를 들어 CMD_TYPE == 1 요청을 보내면
+            [1, 0, 0, 0]
+            이 와야 다음 CMD_TYPE_1_BYTE_LEN 만큼 읽을 수 있음
+
+            CMD_TYPE_1
+            [1, 0, 0, 0]
+            CMD_TYPE_2
+            [0, 1, 0, 0]
+            CMD_TYPE_3
+            [1, 1, 1, 0]
+
+    >> [CMD_TYPE_${X}_BYTE_LEN]: CMD_TYPE_${X}_LEN byte, double 
+
+            해당 CMD_TYPE_${X}_BYTE_LEN 만큼 읽고
+            8 byte 씩 double 타입으로 변환하면 됨
+
+
+```
+
+
+### Client Example (Python)
+
+아래는 render/py/game_main.py 에서 발췌한 것임
+
+
+```python
+
+# unix 소켓 연결을 위한 소켓 경로 지정
+
+socket_path = GLOB.EXPORT_SOCK_PATH
+
+
+# 연결
+
+client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+client.connect(socket_path)
+
+
+print("connected to export socket")
+
+while KEEP == True:
+
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+    client.connect(socket_path)
+
+
+    print("connected to export socket")
+
+
+    while KEEP == True:
+
+
+
+        if GLOB.CMD_TYPE == 3:
+
+
+            # CMD_TYPE 3 는
+            # 3을 전송하면 됨
+
+            message = "3"
+
+            client.sendall(message.encode())
+
+
+            # 4 byte 우선 읽고
+            # [ x, x, 1, x]
+            #  이면 성공
+
+            flag_set_byte = client.recv(GLOB.FLAG_SET_BYTE)
+
+            flag_set_arr = [ x for x in flag_set_byte ]
+
+            print(flag_set_arr)
+
+
+            # index 2 가 1 이 아니면 continue
+
+            if flag_set_arr[2] != 1 :
+
+                print("invalid flag")
+
+                continue
+
+            # 맞으면
+            # CMD_TYPE_3_BYTE_LEN 을 만족할 때까지
+            # read 하면 됨
+
+            total_recv_len = 0
+
+            response = b''        
+
+            while total_recv_len != GLOB.CMD_TYPE_3_BYTE_LEN:
+
+
+                resp = client.recv(GLOB.CMD_TYPE_3_BYTE_LEN)
+
+                print(len(resp))
+
+
+                response_bytes_len = len(resp)
+
+                total_recv_len += response_bytes_len
+
+                response += resp
+
+
+            print(total_recv_len)
+
+
+            # render_plot = render.cmd_type_1(response, render_plot)
+
+
+            print("cmd_type_3")
+
+
+            data_raw = []
+
+
+
+            for i in range(GLOB.CMD_TYPE_3_LEN):
+
+                start_index = i * GLOB.DOUBLE_T
+                end_index = start_index + GLOB.DOUBLE_T
+
+                value_double = struct.unpack("d", response[start_index:end_index])[0]
+
+                data_raw.append(value_double)
+            
+
+            print(len(data_raw))
+
+            i = 0
+
+            for x in range(GLOB.BF_DATA_X):
+
+                for y in range(GLOB.BF_DATA_Y):
+
+                    bf_data[x][y] = data_raw[i]
+
+                    i += 1       
+
+            
+
+            for x in range(GLOB.RMS_DATA):
+
+                rms_data[x] = data_raw[i]
+
+                i += 1
+
+
+            for x in range(GLOB.MIC_DATA):
+
+                mic_data[x] = data_raw[i]
+
+                i += 1       
+
+            
+
+            for x in range(GLOB.BF_MIC_DATA):
+
+                bf_mic_data[x] = data_raw[i]
+
+                i += 1
+
+
+            print("handled cmd_type_3")
+
+            time.sleep(0.04)
+
+```
+
+
+
+
+
+
+
+
+
+
 
 ## Notes
 

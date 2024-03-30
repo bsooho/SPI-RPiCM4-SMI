@@ -3,6 +3,8 @@ VLEN = 100
 FS = 200
 TS = 1/FS
 
+EXPORT_SOCK_PATH = "/tmp/fpga_stream_export.sock"
+
 DOUBLE_T = 8
 
 SPL_MAX = 122 #dB
