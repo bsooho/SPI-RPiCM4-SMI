@@ -50,9 +50,9 @@ streamer 가 수집, 가공한 데이터를 외부 소켓 클라이언트에게 
 
 # enable force turbo
 
-sudo nano /boot/config.txt 
+sudo nano /boot/config.txt 또는 /bbot/firmware/config.txt
 
-# 맨 아래 쪽에 다음 추가
+# 맨 아래에 다음 추가
 ...
 
 [all]
