@@ -5,7 +5,6 @@
 
     @SECTION: GENERAL VARIABLE
 
-
 */
 
 
@@ -20,16 +19,12 @@
 // 원래 25 사이클 당 한 번 export를 하게 되어 있으나
 // 이 설정을 켜면 1 사이클 당 한 번 export 함
 // 25 fps
-
-
 #define EXPORT_ALL                1
 
 // export x5
 // 원래 25 사이클 당 한 번 export를 하게 되어 있으나
 // 이 설정을 켜면 5 사이클 당 한 번 export 함
 // 5 fps
-
-
 #define EXPORT_X5                 0
 
 // 아래의 정의는 기존 코드의
