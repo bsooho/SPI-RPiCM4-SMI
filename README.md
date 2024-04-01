@@ -54,11 +54,9 @@ sudo nano /boot/config.txt 또는 /bbot/firmware/config.txt
 
 # 맨 아래에 다음 추가
 ...
-
 [all]
-
 force_turbo=1
-
+'''
 sudo reboot
 
 # git clone
