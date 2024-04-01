@@ -19,17 +19,19 @@
 
 
 
-- dma-spi streamer (c)
+- dma-spi streamer (C)
 
-FPGA와 상호작용하여 필요한 데이터를 읽어온 뒤 exporter 가 외부 소켓 클라이언트에게 즉각 제공할 수 있는 형태로 변환하여 저장하는 역할을 함
+FPGA와 상호작용하여 필요한 데이터를 읽어온 뒤 exporter 가 외부 소켓 클라이언트에게 즉각 제공할 수 있는 형태로 변환하여 저장하는 역할.
 
-- data exporter (c)
+- data exporter (C)
 
-streamer 가 수집, 가공한 데이터를 외부 소켓 클라이언트에게 제공하는 역할을 함 
+streamer 가 수집, 가공한 데이터를 외부 소켓 클라이언트에게 제공하는 역할.
+향후 실제 장비 SW (SMI Player)에서는 이 소켓을 통해 데이터 주고받음.
 
 - renderer (python)
 
-이 부분은 exporter 소켓에서 읽어들인 데이터를 사용하여 CMD_TYPE에 따라 렌더링하는 작업을 함
+이 부분은 실제 장비 SW와 관련없고, 상기 exporter 소켓에서 읽어들인 데이터의 자체 검증을 위하여 CMD_TYPE에 따라 렌더링하는 작업에 해당함.
+참고용 코드로 해석하면 됨.
 
 
 ## Requirements
