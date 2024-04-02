@@ -463,7 +463,63 @@ make v1
 
 sudo ./v1.run
 
+# 다른 터미널에서
+
+cd render/py
+
+source myenv/bin/activate
+
+# GLOB.py 
+# CMD_TYPE = 3
+# TEST_3 = 0
+
 log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 찍히는 것 확인
+
+```
+
+### force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, RENDERING
+
+아래는 force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, 그리고 파이썬 쪽에서 데이터를 읽어가고\
+렌더링 까지 하는 경우의 (CMD_TYPE 1 렌더링) 테스트 결과임\
+이는 doc/log/c-test-ft-3-all-render.txt 에서 확인 가능 함
+
+```shell
+
+[ 2024-04-02 01:37:19.535 ] total ge40ms   : 283 / 110200 
+[ 2024-04-02 01:37:19.535 ] total ge35ms   : 1023 / 110200 
+[ 2024-04-02 01:37:19.535 ] total csum_fail: 0 / 110200 
+```
+
+
+- reproduce 하는 법
+
+```shell
+
+make clean
+
+
+# CMD_TYPE = 3
+# SPI_BPW = 32
+# SPI0_SPEED = 24995000 
+# EXPORT_ ALL = 1
+# VERSION_MINOR = 2
+
+make v1
+
+sudo ./v1.run
+
+# 다른 터미널에서
+
+cd render/py
+
+source myenv/bin/activate
+
+# GLOB.py 
+# CMD_TYPE = 3
+# TEST_3 = 1
+
+log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 찍히는 것 확인
+
 
 ```
 

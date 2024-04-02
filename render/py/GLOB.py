@@ -3,6 +3,8 @@ VLEN = 100
 FS = 200
 TS = 1/FS
 
+TEST_3 = 1
+
 EXPORT_SOCK_PATH = "/tmp/fpga_stream_export.sock"
 
 DOUBLE_T = 8

@@ -60,6 +60,12 @@ elif GLOB.CMD_TYPE == 2:
     sig_surf1 = pygame.Surface((6* fig_interp, 2 * fig_interp))
     sig_surf2 = pygame.Surface((6* fig_interp, 2 * fig_interp))
 
+elif GLOB.CMD_TYPE == 3 and GLOB.TEST_3 == 1:
+
+    fig = pygame.display.set_mode((6 * fig_interp, 10 * fig_interp))
+    sig_surf1 = pygame.Surface((6* fig_interp, 2 * fig_interp))
+    sig_surf2 = pygame.Surface((6* fig_interp, 2 * fig_interp))
+
 
 print("initiated plot rendering")
 
@@ -522,9 +528,102 @@ while KEEP == True:
                 i += 1
 
 
-            print("handled cmd_type_3")
 
-            time.sleep(0.04)
+            if GLOB.TEST_3 == 1:
+                
+                bf_db = GLOB.SPL_MAX + 10 * np.log10(bf_data * GLOB.POW_CONSTANT)
+                # ~ print(bf_db.max())
+                
+                bf_max = bf_db.max()
+                bf_min = bf_db.min()
+                bf_diff = bf_max - bf_min
+                print('min max diff = %f, min = %f max = %f'%(bf_diff, bf_min, bf_max))        
+
+                #bf_db = bf_db - bf_min + 0.0001
+                # bf_db = bf_db / bf_db.max() #* 250
+                bf_scale = ((bf_db + drange) / drange * 255).astype(np.uint8)
+                bf_interp = np.kron(bf_scale, kron_kernel)
+
+
+                image[:, :, 0] = bf_interp
+                image[:, :, 1] = bf_interp
+                image[:, :, 2] = bf_interp
+
+
+                surf = pygame.surfarray.make_surface(image)
+
+
+                fig.blit(surf, (0, 0))
+
+        
+                
+
+                
+                #-------------------------------------------------------------
+                # mic msl
+
+                max_idx = np.argmax(bf_db)
+                max_idx = np.unravel_index(max_idx, bf_db.shape) #max value row index
+                        
+                msl_line = bf_db[max_idx[0],:]
+                
+                y2 = msl_line
+                
+
+                ymax2 = y2.max()
+                ymin2 = ymax2 - 30 #y2.min()
+
+
+
+                show_len = len(y2)
+                sig_scale = np.int32(np.float32(y2[0:show_len]) * scale) 
+
+                points1 = tuple(( (i * width_per_sample, sig_scale[i]) for i in range(show_len) ))
+
+                sig_surf1.fill((0,0,0))
+
+                pygame.draw.lines(sig_surf1, (255, 255, 0), False, points1)
+
+                fig.blit(sig_surf1, (0, 5 * fig_interp))
+            
+                #-------------------------------------------------------------        
+                # mic rms
+                
+
+                rms_th = rms_data.mean() * 0.1
+                mic_low = np.where(rms_data < rms_th)[0]
+                
+                rms_db = GLOB.SPL_MAX + 10 * np.log10(rms_data * GLOB.POW_RMS_CONSTANT + 0.0000000000000001)  #prevent 0 dB error
+                
+                rms_max = rms_db.max()
+                rms_min = rms_db.min()
+                rms_av = rms_db.mean()
+                rms_diff = rms_max - rms_min
+                # ~ print(rms_db[:20])
+                print('Mic rms max[%.2f] min[%.2f] av[%.2f]\nlow power mic idx %s'%(rms_max, rms_min, rms_av, mic_low))
+                
+
+                y3 = rms_db
+
+                show_len = len(y3)
+                sig_scale = np.int32(np.float32(y3[0:show_len]) * scale) 
+                points2 = tuple(( (i * width_per_sample, sig_scale[i]) for i in range(show_len) ))
+
+                sig_surf2.fill((0,0,0))
+
+                pygame.draw.lines(sig_surf2, (255, 255, 0), False, points2)
+
+                fig.blit(sig_surf2, (0, 7 * fig_interp))
+
+                pygame.display.update()
+
+
+            else:
+                
+                print("cmd_type_3 handled")
+
+                time.sleep(0.04)
+        
 
 
         for i in pygame.event.get():
