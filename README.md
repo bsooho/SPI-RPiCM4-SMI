@@ -71,7 +71,7 @@ git clone https://github.com/bsooho/SPI-RPiCM4-SMI.git
 
 cd SPI-RPiCM4-SMI
 
-./deb.sh
+./dep.sh
 
 make v1
 
