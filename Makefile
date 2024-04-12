@@ -15,6 +15,8 @@ V1_OBJ := rpspi.o v1_stream.o v1_stream_reg.o v1_export.o v1_utils.o
 
 V1_OBJ_DMA := $(V1_OBJ) dma.o
 
+OBJ_CLIENT := render_client.o render_client_cmd.o 
+
 all:
 
 	@echo "rpspi server"
@@ -35,6 +37,10 @@ v1dma: $(V1_OBJ_DMA)
 
 
 	gcc $(GCC_FLAGS) $(INCLUDES) -o v1dma.run main.c $(V1_OBJ_DMA)
+
+client: $(OBJ_CLIENT)
+
+	gcc $(GCC_FLAGS) $(INCLUDES) -o client.run render/client/main.c $(OBJ_CLIENT)
 
 rpspi.o:
 
@@ -67,6 +73,18 @@ v1_export.o:
 v1_utils.o:
 
 	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o v1_utils.o src/v1/utils.c
+
+
+
+render_client.o:
+
+	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o render_client.o render/client/client.c
+
+
+render_client_cmd.o:
+
+	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o render_client_cmd.o render/client/cmd.c
+
 
 sample:
 
