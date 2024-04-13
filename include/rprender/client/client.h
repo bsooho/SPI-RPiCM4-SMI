@@ -8,8 +8,8 @@
 
 
 
-
-extern int CLIENT_FD;
+extern int EXPORT_FD;
+extern int COMMAND_FD;
 
 
 
@@ -17,11 +17,10 @@ extern int CLIENT_FD;
 int RPCL_init_connection(char* addr);
 
 
-int RPCL_get_spi0(char* cmd, uint8_t* read_bytes);
+int RPCL_get_export(char* cmd, uint8_t* read_bytes);
 
 
-int RPCL_send_spi1();
-
+int RPCL_send_command(char* cmd, uint8_t* req, uint8_t* response);
 
 
 void RPCL_log_clientln(char* log);

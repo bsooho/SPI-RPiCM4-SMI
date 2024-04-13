@@ -12,7 +12,7 @@ uint8_t flag_set[FLAG_SET] = {0};
 // exporter 스레드
 
 
-RS_CODE RS_export_main(pthread_t *tid, pthread_mutex_t *tmtx){
+RS_CODE RS_export_main(pthread_t *tid){
 
 
     int status = pthread_create(tid, NULL, RS_export_controller, NULL);

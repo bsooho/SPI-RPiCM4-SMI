@@ -36,7 +36,7 @@
 #include <sched.h>
 
 
-#include "rpspi/glob.h"
+#include "glob.h"
 
 
 /*
@@ -67,6 +67,7 @@ typedef struct {
 */
 
 extern pthread_t tid;
+extern pthread_t tid_cmd;
 extern pthread_mutex_t tmtx; 
 
 /*

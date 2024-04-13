@@ -63,7 +63,7 @@ extern EXPORT_CONTROL ec;
     @FUNCTION
 */
 
-RS_CODE RS_export_main(pthread_t *tid, pthread_mutex_t *tmtx);
+RS_CODE RS_export_main(pthread_t *tid);
 
 RS_CODE RS_rdata_export();
 
