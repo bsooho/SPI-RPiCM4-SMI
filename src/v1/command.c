@@ -645,11 +645,14 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
             } else {
 
+                *resp_len = EC_MAX_XYZ_LEN;
+
                 memcpy(response, gv.read_data, EC_MAX_XYZ_LEN * sizeof(uint8_t));
 
                 flag_set_local[0] = 1;
 
                 flag_set_local[1] = EC_MAX_XYZ_LEN;
+
 
 
             }
@@ -691,6 +694,8 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
                 
 
             } else {
+
+                *resp_len = EC_MAX_IIR_COEF_LEN;
 
                 memcpy(response, gv.read_data, EC_MAX_IIR_COEF_LEN * sizeof(uint8_t));
 
@@ -740,6 +745,8 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
             } else {
 
+                *resp_len = EC_MAX_COMMON_LEN;
+
                 memcpy(response, gv.read_data, EC_MAX_COMMON_LEN * sizeof(uint8_t));
 
                 flag_set_local[0] = 1;
@@ -782,13 +789,13 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
             int success_len = strlen(success);
 
+            flag_set_local[0] = 1;
+
             flag_set_local[1] = success_len;
 
             *resp_len = success_len;
 
             memcpy(response, success, success_len * sizeof(uint8_t));
-
-            flag_set_local[0] = 1;
 
         }
 
@@ -821,13 +828,13 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
             int success_len = strlen(success);
 
+            flag_set_local[0] = 1;
+
             flag_set_local[1] = success_len;
 
             *resp_len = success_len;
 
             memcpy(response, success, success_len * sizeof(uint8_t));
-
-            flag_set_local[0] = 1;
 
         }
 
@@ -862,13 +869,13 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
             int success_len = strlen(success);
 
+            flag_set_local[0] = 1;
+
             flag_set_local[1] = success_len;
 
             *resp_len = success_len;
 
             memcpy(response, success, success_len * sizeof(uint8_t));
-
-            flag_set_local[0] = 1;
 
         }
 
