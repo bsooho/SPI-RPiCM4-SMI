@@ -73,7 +73,9 @@
 #define DEBUG_LEVEL 1
 
 
+// 1 이면 프린트 함
 
+#define PRINTOUT 0
 
 
 /*
