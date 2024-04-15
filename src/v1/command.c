@@ -614,48 +614,20 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
     if(strcmp(cmd, "XYZ") == 0){
 
+        rs_res = RS_read_xyz(req, resp_len, response);
 
-        memset(gv.read_cmd, 0, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        memcpy(gv.read_cmd, req, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_read_cmd(&gv, WL_TX_CMD_READ);
 
         if (rs_res != RS_OKAY){
 
-            RS_log_sockln("failed to send read cmd xyz");
+            RS_log_sockln("failed to send read xyz");
             
 
         } else {
 
 
-            RS_msleep(100);
+            flag_set_local[0] = 1;
 
-            memset(gv.read_data, 0, WL_TX_CMD_WRITE_MAX * sizeof(uint8_t));
-
-            rs_res = RS_get_read_data_from_aux_rx(&gv, EC_MAX_XYZ_LEN);
-
-
-            if (rs_res != RS_OKAY){
-
-
-                RS_log_sockln("failed to read xyz");
-                
-
-
-            } else {
-
-                *resp_len = EC_MAX_XYZ_LEN;
-
-                memcpy(response, gv.read_data, EC_MAX_XYZ_LEN * sizeof(uint8_t));
-
-                flag_set_local[0] = 1;
-
-                flag_set_local[1] = EC_MAX_XYZ_LEN;
-
-
-
-            }
+            flag_set_local[1] = EC_MAX_XYZ_LEN;
 
 
         }
@@ -666,46 +638,19 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
     } else if (strcmp(cmd, "IIR") == 0) {
 
 
-        memset(gv.read_cmd, 0, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        memcpy(gv.read_cmd, req, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_read_cmd(&gv, WL_TX_CMD_READ);
+        rs_res = RS_read_iircoef(req, resp_len, response);
 
         if (rs_res != RS_OKAY){
 
-            RS_log_sockln("failed to send read cmd iir");
+            RS_log_sockln("failed to send read iir");
             
 
         } else {
 
 
-            RS_msleep(100);
+            flag_set_local[0] = 1;
 
-            memset(gv.read_data, 0, WL_TX_CMD_WRITE_MAX * sizeof(uint8_t));
-
-            rs_res = RS_get_read_data_from_aux_rx(&gv, EC_MAX_IIR_COEF_LEN);
-
-
-            if (rs_res != RS_OKAY){
-
-
-                RS_log_sockln("failed to read iir");
-                
-
-            } else {
-
-                *resp_len = EC_MAX_IIR_COEF_LEN;
-
-                memcpy(response, gv.read_data, EC_MAX_IIR_COEF_LEN * sizeof(uint8_t));
-
-                flag_set_local[0] = 1;
-
-                flag_set_local[1] = EC_MAX_IIR_COEF_LEN;
-
-
-            }
-
+            flag_set_local[1] = EC_MAX_IIR_COEF_LEN;
 
         }
 
@@ -714,47 +659,19 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
     } else if (strcmp(cmd, "COM") == 0) {
 
 
-
-
-        memset(gv.read_cmd, 0, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        memcpy(gv.read_cmd, req, WL_TX_CMD_READ * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_read_cmd(&gv, WL_TX_CMD_READ);
+        rs_res = RS_read_common(req, resp_len, response);
 
         if (rs_res != RS_OKAY){
 
-            RS_log_sockln("failed to send read cmd common");
+            RS_log_sockln("failed to send read common");
             
 
         } else {
 
 
-            RS_msleep(100);
+            flag_set_local[0] = 1;
 
-            memset(gv.read_data, 0, WL_TX_CMD_WRITE_MAX * sizeof(uint8_t));
-
-            rs_res = RS_get_read_data_from_aux_rx(&gv, EC_MAX_COMMON_LEN);
-
-
-            if (rs_res != RS_OKAY){
-
-
-                RS_log_println("failed to read common");
-                
-
-            } else {
-
-                *resp_len = EC_MAX_COMMON_LEN;
-
-                memcpy(response, gv.read_data, EC_MAX_COMMON_LEN * sizeof(uint8_t));
-
-                flag_set_local[0] = 1;
-
-                flag_set_local[1] = EC_MAX_COMMON_LEN;
-
-
-            }
+            flag_set_local[1] = EC_MAX_COMMON_LEN;
 
 
         }
@@ -762,11 +679,7 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
     } else if (strcmp(cmd, "XYZUP") == 0) {
 
-        memset(gv.write_cmd, 0, EC_MAX_WRITE_CMD_LEN * sizeof(uint8_t));
-
-        memcpy(gv.write_cmd, req, EC_MAX_XYZ_LEN * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_write_cmd(&gv, EC_MAX_XYZ_LEN);
+        rs_res = RS_update_xyz(req);
 
         if (rs_res != RS_OKAY){
 
@@ -801,11 +714,7 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
     } else if (strcmp(cmd, "IIRUP") == 0) {
 
-        memset(gv.write_cmd, 0, EC_MAX_WRITE_CMD_LEN * sizeof(uint8_t));
-
-        memcpy(gv.write_cmd, req, EC_MAX_IIR_COEF_LEN * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_write_cmd(&gv, EC_MAX_IIR_COEF_LEN);
+        rs_res = RS_update_iircoef(req);
 
         if (rs_res != RS_OKAY){
 
@@ -841,12 +750,7 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
     } else if (strcmp(cmd, "COMUP") == 0) {
 
-
-        memset(gv.write_cmd, 0, EC_MAX_WRITE_CMD_LEN * sizeof(uint8_t));
-
-        memcpy(gv.write_cmd, req, EC_MAX_COMMON_LEN * sizeof(uint8_t));
-
-        rs_res = RS_set_aux_tx_from_write_cmd(&gv, EC_MAX_COMMON_LEN);
+        rs_res = RS_update_common(req);
 
         if (rs_res != RS_OKAY){
 
@@ -882,7 +786,6 @@ RS_CODE RS_roundtrip_to_flag_set_cmd(char* cmd, uint8_t* req, uint32_t* resp_len
 
 
     } 
-
 
 
     val_write = write(cc.client_fd, flag_set_local, FLAG_SET * sizeof(uint8_t));

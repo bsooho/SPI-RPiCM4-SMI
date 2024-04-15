@@ -99,9 +99,15 @@ RS_CODE RS_stream_main(){
     // 원래 코드와 동일하게
     // spi1 관련 통신 진행함
 
+#if VERSION_MINOR == 1
 
     rs_result = RS_register_spi1();
 
+#elif VERSION_MINOR == 2
+
+    rs_result = RS_register_spi1_2();
+
+#endif
 
 
     if (rs_result != RS_OKAY){

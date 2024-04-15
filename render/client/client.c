@@ -518,11 +518,231 @@ int RPCL_send_command(char* cmd, uint8_t* req, uint8_t* response){
 
     } else if (strcmp(cmd, "XYZUP") == 0){
 
+        int readb = 0;
+
+        uint8_t read_buff[CMD_TYPE_COM_LEN] = {0};
+
+        val_write = write(COMMAND_FD, cmd, CMD_BUFF_LEN * sizeof(char));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd xyz update");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+        val_write = write(COMMAND_FD, req, CMD_TYPE_XYZ_LEN * sizeof(uint8_t));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd xyz update req");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+
+        readb = read(COMMAND_FD, flag_set, FLAG_SET * sizeof(uint8_t));
+        
+        if (readb <= 0){
+
+            RPCL_log_clientln("failed to read flag");
+            RPCL_log_clientln("readb <= 0");
+            return -1;
+
+        }
+
+
+        if(flag_set[0] != 1){
+
+            RPCL_log_clientln("flag failed");
+
+        }
+        
+        readb = 0;
+
+        int resp_len = flag_set[1];
+
+        while(val_read < resp_len){
+
+            memset(read_buff, 0, resp_len * sizeof(uint8_t));
+
+            readb = read(COMMAND_FD, read_buff, resp_len * sizeof(uint8_t));
+
+            if (readb <=0){
+
+                RPCL_log_clientln("failed to read xyz update");
+                RPCL_log_clientln("readb <= 0");
+                return -2;
+
+            }
+
+
+            for (int i = 0 ; i < readb; i ++){
+
+                int idx = i + val_read;
+
+                response[idx] = read_buff[i];
+
+            }
+
+            val_read += readb;
+
+        }
 
     } else if (strcmp(cmd, "IIRUP") == 0){
 
+        int readb = 0;
+
+        uint8_t read_buff[CMD_TYPE_COM_LEN] = {0};
+
+        val_write = write(COMMAND_FD, cmd, CMD_BUFF_LEN * sizeof(char));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd iir update");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+        val_write = write(COMMAND_FD, req, CMD_TYPE_IIR_LEN * sizeof(uint8_t));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd iir update req");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+
+        readb = read(COMMAND_FD, flag_set, FLAG_SET * sizeof(uint8_t));
+        
+        if (readb <= 0){
+
+            RPCL_log_clientln("failed to read flag");
+            RPCL_log_clientln("readb <= 0");
+            return -1;
+
+        }
+
+
+        if(flag_set[0] != 1){
+
+            RPCL_log_clientln("flag failed");
+
+        }
+        
+        readb = 0;
+
+        int resp_len = flag_set[1];
+
+        while(val_read < resp_len){
+
+            memset(read_buff, 0, resp_len * sizeof(uint8_t));
+
+            readb = read(COMMAND_FD, read_buff, resp_len * sizeof(uint8_t));
+
+            if (readb <=0){
+
+                RPCL_log_clientln("failed to read iir update");
+                RPCL_log_clientln("readb <= 0");
+                return -2;
+
+            }
+
+
+            for (int i = 0 ; i < readb; i ++){
+
+                int idx = i + val_read;
+
+                response[idx] = read_buff[i];
+
+            }
+
+            val_read += readb;
+
+        }
+
+
 
     } else if (strcmp(cmd, "COMUP") == 0){
+
+        int readb = 0;
+
+        uint8_t read_buff[CMD_TYPE_COM_LEN] = {0};
+
+        val_write = write(COMMAND_FD, cmd, CMD_BUFF_LEN * sizeof(char));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd com update");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+        val_write = write(COMMAND_FD, req, CMD_TYPE_COM_LEN * sizeof(uint8_t));
+
+        if (val_write <=0){
+
+            RPCL_log_clientln("failed to send cmd com update req");
+            RPCL_log_clientln("val_write <= 0");
+            return -1;
+
+        }
+
+
+        readb = read(COMMAND_FD, flag_set, FLAG_SET * sizeof(uint8_t));
+        
+        if (readb <= 0){
+
+            RPCL_log_clientln("failed to read flag");
+            RPCL_log_clientln("readb <= 0");
+            return -1;
+
+        }
+
+
+        if(flag_set[0] != 1){
+
+            RPCL_log_clientln("flag failed");
+
+        }
+        
+        readb = 0;
+
+        int resp_len = flag_set[1];
+
+        while(val_read < resp_len){
+
+            memset(read_buff, 0, resp_len * sizeof(uint8_t));
+
+            readb = read(COMMAND_FD, read_buff, resp_len * sizeof(uint8_t));
+
+            if (readb <=0){
+
+                RPCL_log_clientln("failed to read com update");
+                RPCL_log_clientln("readb <= 0");
+                return -2;
+
+            }
+
+
+            for (int i = 0 ; i < readb; i ++){
+
+                int idx = i + val_read;
+
+                response[idx] = read_buff[i];
+
+            }
+
+            val_read += readb;
+
+        }
+
 
 
     } else {

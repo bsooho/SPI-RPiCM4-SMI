@@ -219,6 +219,21 @@ void RS_exit(int ex_code);
 
 RS_CODE RS_register_spi1();
 
+RS_CODE RS_register_spi1_2();
+
+
+RS_CODE RS_update_xyz(uint8_t* update_cmd);
+
+RS_CODE RS_read_xyz(uint8_t* read_cmd, uint32_t* ack_len, uint8_t* read_ack);
+
+RS_CODE RS_update_iircoef(uint8_t* update_cmd);
+
+RS_CODE RS_read_iircoef(uint8_t* read_cmd, uint32_t* ack_len, uint8_t* read_ack);
+
+RS_CODE RS_update_common(uint8_t* update_cmd);
+
+RS_CODE RS_read_common(uint8_t* read_cmd, uint32_t* ack_len, uint8_t* read_ack);
+
 
 
 
