@@ -50,6 +50,8 @@ int RPCL_get_export(char* cmd, uint8_t* read_bytes){
 
     uint8_t flag_set[FLAG_SET] = {0};
 
+    int cmd_buff_len = strlen(cmd);
+
     if (strcmp(cmd, "1") == 0){
 
         int readb = 0;
@@ -201,7 +203,6 @@ int RPCL_get_export(char* cmd, uint8_t* read_bytes){
 
         }
 
-
         readb = read(EXPORT_FD, flag_set, FLAG_SET * sizeof(uint8_t));
         
         if (readb <= 0){
@@ -214,7 +215,6 @@ int RPCL_get_export(char* cmd, uint8_t* read_bytes){
 
 
         if(flag_set[2] != 1){
-
             RPCL_log_clientln("cmd 3 flag not set");
             return -1;
 
@@ -283,6 +283,8 @@ int RPCL_send_command(char* cmd, uint8_t* req, uint8_t* response){
     int val_read = 0;
 
     uint8_t flag_set[FLAG_SET] = {0};
+
+    int cmd_buff_len = strlen(cmd);
 
     if (strcmp(cmd, "XYZ") == 0){
 
@@ -828,3 +830,37 @@ void RPCL_get_current_time_string(char* tstr){
 
 }
 
+
+void RPCL_stringify_array_u8(char* strarray, int arr_len , uint8_t* arr){
+
+
+    strcat(strarray, "[ ");
+
+
+    for (int i = 0 ; i < arr_len; i ++){
+
+
+        char tmp_el[24] = {0};
+
+        sprintf(tmp_el, "%u, ", arr[i]);
+
+        strcat(strarray, tmp_el);
+
+    }
+
+
+    strcat(strarray, " ]");
+
+
+}
+
+void RPCL_msleep(long ms){
+
+    struct timespec ts;
+    int res;
+
+    ts.tv_sec = ms / 1000;
+    ts.tv_nsec = (ms % 1000) * 1000000;
+
+    nanosleep(&ts, &ts);
+}

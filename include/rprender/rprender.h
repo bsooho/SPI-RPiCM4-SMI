@@ -26,8 +26,56 @@
 
 
 
+
+
+
+
 #include "rp_glob.h"
 
+
+
+
+typedef struct RENDER_VARIABLE{
+
+    double bf_data[BF_DATA_X][BF_DATA_Y];
+    double rms_data[RMS_DATA];
+    double mic_data[MIC_DATA];
+    double bf_mic_data[MIC_DATA];
+
+    int IS_SET_BPF;
+    int IS_IIR_COEF_20_30;
+    int MIC_SEL;
+    int TEST_ENABLE;
+    int TEST_FREQ;
+    int IS_MIC_AFE;
+    int GAIN;
+
+
+
+} RENDER_VARIABLE;
+
+
+
+extern RENDER_VARIABLE rv;
+
+
+void RPCL_example_cmd_type_1(char* test);
+
+void RPCL_example_cmd_type_2(char* test);
+
+void RPCL_example_cmd_type_3(char* test);
+
+void RPCL_example_update_xyz(char* test);
+
+void RPCL_example_read_xyz(char* test);
+
+void RPCL_example_update_iircoef(char* test);
+
+void RPCL_example_read_iircoef(char* test);
+
+void RPCL_example_update_common(char* test);
+
+void RPCL_example_read_common(char* test);
 
 
 #endif

@@ -5,6 +5,9 @@
 [Requirements](#requirements)\
 [How to run](#how-to-run)\
 [Socket Export Protocol](#socket-export-protocol)\
+[Client Include](#client-include)\
+[Client Example (CMD)](#client-example-cmd)\
+[Client Example (C)](#client-example-c)\
 [Notes](#notes)\
 [Test](#test)
 
@@ -123,7 +126,7 @@ python main.py
 
 이는
 
-- include/rpspi/glob.h (서버 측)
+- include/rpspi/rp_glob.h (서버 측)
 - render/py/GLOB.py (클라이언트 측)
   
 에서 각각 수정할 수 있음
@@ -132,6 +135,8 @@ python main.py
 ### Definition
 
 ```shell
+
+# SPI0
 
 REQUEST:
     << [1] : 1 byte, char
@@ -142,7 +147,7 @@ REQUEST:
 
 RESPONSE:
 
-    >> [4] : 4 byte, int
+    >> [4] : 4 byte, uint8_t
             예를 들어 CMD_TYPE == 1 요청을 보내면
             [1, 0, 0, 0]
             이 와야 다음 CMD_TYPE_1_BYTE_LEN 만큼 읽을 수 있음
@@ -158,6 +163,456 @@ RESPONSE:
 
             해당 CMD_TYPE_${X}_BYTE_LEN 만큼 읽고
             8 byte 씩 double 타입으로 변환하면 됨
+
+# SPI1
+
+
+REQUEST:
+    
+    << [10] : 10 byte, char
+            XYZ   == read xyz
+            IIR   == read iir
+            COM   == read common
+            XYZUP == update xyz
+            IIRUP == update iir
+            COMUP == update common
+    
+    << [req] : ${req} byte
+            각 요청 길이에 맞는 만큼
+            XYZ   == read xyz     은 73 * 3
+            IIR   == read iir     은 11 * 3
+            COM   == read common  은 4  * 3
+            XYZUP == update xyz   은 가변 길이 (flag[1])
+            IIRUP == update iir   은 가변 길이 (flag[1])
+            COMUP == update common은 가변 길이 (flag[1])
+
+RESPONSE:
+
+    >> [4] : 4 byte, uint8_t
+            첫번째 자리 성공 여부:
+                0 == 실패
+                1 == 성공
+            두번째 자리 응답 길이:
+                최대 255
+            예를 들어,
+            [1, 10, 0, 0]
+            이 오면
+            성공했고, 응답길이가 10 바이트라는 뜻
+
+    >> [resp]: ${resp} byte, uint8_t 
+
+            각 응답별 response 길이
+
+```
+
+### Client Include 
+
+아래는 타 클라이언트 활용법임
+
+```shell
+
+필요한 파일:
+    include/rp_glob.h
+    include/rprender/rprender.h
+    include/rprender/client/client.h
+    render/client/client.c
+
+
+```
+
+```c
+
+// 사용을 원할 시 아래 파일만 include 하면 됨
+// 빌드 예시는 make client 참조
+#include "rprender/client/client.h"
+
+
+
+```
+
+
+### Client Example (CMD)
+
+아래는 디버깅용 클라이언트 프로그램 사용법임
+
+```shell
+
+make client
+
+./client
+
+# CMD TYPE 3 데이터 테스트
+
+$ test command: 3
+CMD_TYPE_3.
+success!
+conversion start
+conversion success
+
+# read common 테스트 
+
+$ test command: COM
+CMD_TYPE_COM.
+success!
+---------------------------------
+cmd common read data
+[ 250, 0, 3, 0, 0, 0, 20, 0, 0, 14, 0, 3,  ]
+rdata length = 12
+head ffb5fe10 csum fpga e0003  csum cal e0003 (1)
+-----------------------------------------
+```
+
+
+### Client Example (C)
+
+아래는 render/client/main.c 에서 발췌한 것임
+
+
+```c
+
+
+    
+    int export_fd;
+    int command_fd;
+
+    // SPI0 소켓에 연결
+
+    export_fd = RPCL_init_connection(export_sock);
+
+
+    if (export_fd < 1){
+
+        printf("failed to connect to export\n");
+
+        return -1;
+
+    }
+
+
+    // SPI1 소켓에 연결
+
+    command_fd = RPCL_init_connection(command_sock);
+
+
+    if(command_fd < 1){
+
+        printf("failed to connect to command");
+
+        return -1;
+
+    }
+    
+
+    EXPORT_FD = export_fd;
+
+    COMMAND_FD = command_fd;
+
+    char test[10] = {0};
+
+
+    while(1){
+
+        int cmd_len = 0;
+
+        memset(test, 0, 10 * sizeof(char));
+
+        printf("$ test command: ");
+
+        fgets(test, 10, stdin);
+
+        cmd_len = strlen(test);
+
+        for(int i = 0 ; i < cmd_len; i ++){
+
+            if(test[i] == '\n'){
+
+                test[i] = '\0';
+            }
+
+        }
+
+        int read_len = 0;
+
+        // 각 명령어에 따라 예제 처리 코드로 분기
+
+
+        if(strcmp(test, "1") == 0){
+
+            RPCL_example_cmd_type_1(test);
+
+
+        } else if (strcmp(test, "2") == 0){
+
+            RPCL_example_cmd_type_2(test);
+
+
+        } else if (strcmp(test, "3") == 0){
+
+
+            RPCL_example_cmd_type_3(test);
+
+
+        } else if (strcmp(test, "XYZ") == 0){
+
+
+            RPCL_example_read_xyz(test);
+
+
+        } else if (strcmp(test, "IIR") == 0){
+
+
+            RPCL_example_read_iircoef(test);
+
+
+        } else if (strcmp(test, "COM") == 0){
+
+
+            RPCL_example_read_common(test);
+
+
+        } else if (strcmp(test, "XYZUP") == 0){
+
+
+            RPCL_example_update_xyz(test);
+
+
+        } else if (strcmp(test, "IIRUP") == 0){
+
+
+            RPCL_example_update_iircoef(test);
+
+
+        } else if (strcmp(test, "COMUP") == 0){
+
+
+            RPCL_example_update_common(test);
+
+
+        } else {
+
+            printf("invalid cmd: %s\n", test);
+
+        }
+
+
+
+    }
+
+
+
+    return 0;
+
+```
+
+- CMD_TYPE_3 예제
+```c
+
+
+void RPCL_example_cmd_type_3(char* test){
+
+
+    printf("CMD_TYPE_3.\n");
+
+    int read_len = 0;
+
+    uint8_t read_bytes[CMD_TYPE_3_BYTE_LEN] = {0};
+
+    // SPI0 에서는 RPCL_get_export 에
+    // 1. 명령코드
+    // 2. 해당 명령코드로 읽어들일 만큼의 uint8_t 배열
+    // 전달하면 됨
+
+    read_len = RPCL_get_export(test, read_bytes);
+
+    if(read_len != CMD_TYPE_3_BYTE_LEN){
+
+        printf("failed: %d\n", read_len);
+    
+    } else {
+
+        printf("success!\n");
+    } 
+
+    printf("conversion start\n");
+
+    // CMD_TYPE_3 의 경우
+    // 전처리 계산된 모든 데이터를 읽어오므로
+    // 아래와 같이 해석함
+    // 같은 호스트이므로 엔디안은 무시
+
+    double data_raw[CMD_TYPE_3_LEN];
+
+
+    for(int i = 0 ; i < CMD_TYPE_3_LEN; i++){
+
+        uint8_t tmp[DOUBLE_T] = {0};
+
+        int start_index = i * DOUBLE_T;
+
+        int end_index = start_index + DOUBLE_T;
+
+        int idx = 0;
+
+        for(int j = start_index; j < end_index; j++){
+
+            
+            tmp[idx] = read_bytes[j];
+
+            idx += 1;
+
+        }
+
+        memcpy(&(data_raw[i]), tmp, DOUBLE_T * sizeof(uint8_t));
+
+
+    }
+
+
+    int i = 0;
+
+    for (int x = 0; x < BF_DATA_X; x++){
+
+        for(int y = 0; y < BF_DATA_Y; y++){
+
+
+            rv.bf_data[x][y] = data_raw[i];
+
+            i += 1;
+
+        }
+
+    }
+
+
+    for(int x = 0; x < RMS_DATA; x++){
+
+
+        rv.rms_data[x] = data_raw[i];
+
+        i += 1;
+
+    }
+
+
+
+    for(int x = 0; x < MIC_DATA; x++){
+
+
+        rv.mic_data[x] = data_raw[i];
+
+        i += 1;
+
+    }            
+
+    for(int x = 0; x < BF_MIC_DATA; x++){
+
+
+        rv.bf_mic_data[x] = data_raw[i];
+
+        i += 1;
+
+    }
+
+    printf("conversion success\n");
+
+
+
+}
+
+
+```
+
+- read XYZ 커맨드 예제
+```c
+
+
+void RPCL_example_read_xyz(char* test){
+
+
+
+    printf("CMD_TYPE_XYZ.\n");
+
+
+    int read_len = 0;
+
+    uint8_t req[COMMAND_READ_LEN] = {0};
+
+    uint8_t response[CMD_TYPE_XYZ_LEN] = {0};
+
+    req[0] = 0xAC;
+    req[1] = 0x00;
+    req[2] = 0x01;
+
+    // SPI1 에서는 RPCL_send_command 에
+    // 1. 명령코드
+    // 2. 커맨드 바이트 배열
+    // 3. 해당 커맨드로 읽어들일 unint8_t 배열
+    // 전달하면 됨
+
+    read_len = RPCL_send_command(test, req, response);
+
+    if(read_len != CMD_TYPE_XYZ_LEN){
+
+        printf("failed: %d\n", read_len);
+    
+    } else {
+
+        printf("success!\n");
+    } 
+
+    uint64_t read_data_u64[EC_MAX_WRITE_CMD_LEN] = {0};
+
+    char arr_str[1024] = {0};
+
+
+    for(int i = 0; i < EC_MAX_XYZ_LEN; i++){
+
+        read_data_u64[i] = (uint64_t)response[i];
+
+    }
+
+    int blen = EC_MAX_XYZ_LEN;
+    int wlen = EC_MAX_XYZ_LEN / RS_WORD;
+
+    int index_m2 = EC_MAX_XYZ_LEN - 3;
+    int index_m1 = EC_MAX_XYZ_LEN - 2;
+    int index_m0 = EC_MAX_XYZ_LEN - 1;
+
+
+    int csum_fpga = (int)((read_data_u64[index_m2] << 16) | (read_data_u64[index_m1] << 8) | read_data_u64[index_m0]);
+
+    int csum_cal = 0;
+
+
+    for (int k = 0 ; k < wlen - 1; k++){
+
+        int word = (int)((read_data_u64[k*3] << 16) | (read_data_u64[k*3+1] << 8) | read_data_u64[k*3+2]);
+
+        csum_cal = csum_cal + word;
+    }
+
+    csum_cal = csum_cal % POW_2_24;
+
+    int csum_check = FALSE;
+
+    if(csum_fpga == csum_cal){
+
+        csum_check = TRUE;
+
+    } 
+
+    memset(arr_str, 0, 1024 * sizeof(char));
+
+    RPCL_stringify_array_u8(arr_str, EC_MAX_XYZ_LEN, response);
+
+    printf("-----------------------------------------\n");
+    printf("cmd xyz read data\n");
+    printf("%s\n", arr_str);
+    printf("rdata length = %d\n", blen);
+    printf("head %x csum_fpga %x  csum cal %x (%d)\n", req, csum_fpga, csum_cal, csum_check);
+    printf("-----------------------------------------\n");
+
+}
 
 
 ```
@@ -323,7 +778,7 @@ while KEEP == True:
 
 ### 기본
 C 프로그램 테스트 및 실행 시 변경을 빈번하게 할 법한 것들은\
-include/rpspi/glob.h 에 대부분 정의 되어 있음
+include/rpspi/rp_glob.h 에 대부분 정의 되어 있음
 
 CMD_TYPE
 SPI0_SPEED
@@ -523,3 +978,69 @@ log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 
 
 ```
 
+
+### force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, C CLIENT, MINIMAL PRINT
+
+아래는 force_turbo=1, EXPORT_ALL=1, CMD_TYPE=3, 그리고 C 클라이언트에서 데이터를 읽어가고\
+프린트를 최소한으로 사용한 테스트 결과임\
+이는 doc/log/c-test-ft-3-all-client.txt 에서 확인 가능 함
+
+```shell
+
+[ 2024-04-18 16:19:17.137 ] [REPORT_LAST_100_INT]
+[ 2024-04-18 16:19:17.137 ] max:     23, avg: 22, min: 21
+[ 2024-04-18 16:19:17.137 ] ge_40ms: 0, ge_35ms: 0, csum_fail: 0
+[ 2024-04-18 16:19:17.137 ] total ge40ms   : 0 / 23000 
+[ 2024-04-18 16:19:17.137 ] total ge35ms   : 0 / 23000 
+[ 2024-04-18 16:19:17.137 ] total csum_fail: 0 / 23000 
+[ 2024-04-18 16:19:17.137 ] [END]
+```
+
+- reproduce 하는 법
+
+```shell
+
+make clean
+
+
+# CMD_TYPE = 3
+# SPI_BPW = 32
+# SPI0_SPEED = 24995000 
+# EXPORT_ ALL = 1
+# VERSION_MINOR = 2
+# PRINTOUT 0
+
+make v1
+
+sudo ./v1.run
+
+# 다른 터미널에서
+
+make client
+
+./client.run
+
+$ test command: 3LOAD
+
+CMD_TYPE_3.
+success!
+conversion start
+conversion success
+2024-04-18 16:19:18.370 : load testing: took 1ms
+CMD_TYPE_3.
+success!
+conversion start
+conversion success
+2024-04-18 16:19:18.371 : load testing: took 1ms
+CMD_TYPE_3.
+success!
+conversion start
+conversion success
+2024-04-18 16:19:18.372 : load testing: took 1ms
+
+
+
+log/log.txt 에 4초에 한 번씩 (100 회 인터럽트 당 한 번) 리포트 찍히는 것 확인
+
+
+```
