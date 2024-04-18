@@ -11,10 +11,6 @@ LIBS := -lrt -lpthread -lpigpio -lc
 
 V1_OBJ := rpspi.o v1_stream.o v1_stream_reg.o v1_export.o v1_command.o v1_utils.o
 
-# V1_OBJ_TEST := rpspi.o v1_stream.o v1_stream_test.o v1_utils.o
-
-V1_OBJ_DMA := $(V1_OBJ) dma.o
-
 OBJ_CLIENT := render_client.o 
 
 all:
@@ -28,16 +24,6 @@ v1: $(V1_OBJ)
 	gcc $(GCC_FLAGS) $(INCLUDES) -o v1.run src/main.c $(V1_OBJ) $(LIBS)
 
 
-# v1test: $(V1_OBJ_TEST)
-
-#	gcc $(GCC_FLAGS) $(INCLUDES) -o v1.test src/test.c $(V1_OBJ_TEST) $(LIBS)
-
-
-v1dma: $(V1_OBJ_DMA)
-
-
-	gcc $(GCC_FLAGS) $(INCLUDES) -o v1dma.run main.c $(V1_OBJ_DMA)
-
 client: $(OBJ_CLIENT)
 
 	gcc $(GCC_FLAGS) $(INCLUDES) -o client.run render/client/main.c $(OBJ_CLIENT)
@@ -46,9 +32,6 @@ rpspi.o:
 
 	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o rpspi.o src/rpspi.c
 
-dma.o:
-
-	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o dma.o src/dma/dma.c
 
 
 v1_stream.o:
@@ -69,10 +52,6 @@ v1_command.o:
 
 	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o v1_command.o src/v1/command.c
 
-#v1_stream_test.o:
-
-#	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o v1_stream_test.o src/v1/stream_test.c
-
 
 v1_utils.o:
 
@@ -83,11 +62,6 @@ v1_utils.o:
 render_client.o:
 
 	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o render_client.o render/client/client.c
-
-
-sample:
-
-	gcc $(GCC_FLAGS) $(INCLUDES) -o sample.run vendor/sample/spidev-testc.c $(LIBS)
 
 
 clean:
