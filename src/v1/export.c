@@ -12,7 +12,7 @@ uint8_t flag_set[FLAG_SET] = {0};
 // exporter 스레드
 
 
-RS_CODE RS_export_main(pthread_t *tid, pthread_mutex_t *tmtx){
+RS_CODE RS_export_main(pthread_t *tid){
 
 
     int status = pthread_create(tid, NULL, RS_export_controller, NULL);
@@ -108,9 +108,9 @@ RS_CODE RS_interpret_rdata_export(){
     int rlen = ec.rdata_ex_len;
 
     int wlen = rlen / RS_WORD;
-
+#if PRINTOUT
     printf("ex rlen: %d\n", rlen);
-
+#endif
     // head
 
     int head = (ec.rdata_ex[0] << 16) | (ec.rdata_ex[1] << 8) | (ec.rdata_ex[2]);
@@ -159,9 +159,9 @@ RS_CODE RS_interpret_rdata_export(){
 
 
     // display result
-
+#if PRINTOUT
     printf("count %d (%d)\n", cnt_now, cnt_diff);
-
+#endif
     uint64_t first_15[15] = {0};
     uint64_t last_15[15] = {0};
 
@@ -180,11 +180,11 @@ RS_CODE RS_interpret_rdata_export(){
     RS_stringify_array(str_first15, 15, first_15);
 
     RS_stringify_array(str_last15, 15, last_15);
-
+#if PRINTOUT
     printf("rdata length = %d: %s %s\n", rlen, str_first15, str_last15);
 
     printf("head %x csum %llx  csum cal %llx (%d)\n", head, csum, csum_cal, csum_check);
-
+#endif
     // BF RMS data
     if (gv.CMD_TYPE == 1){
 
@@ -281,9 +281,9 @@ RS_CODE RS_interpret_rdata2_export(){
     int rlen = ec.rdata_ex_len;
 
     int wlen = rlen / RS_WORD;
-
+#if PRINTOUT
     printf("ex rlen: %d\n", rlen);
-
+#endif
     // head
 
     int head = (ec.rdata_ex[0] << 16) | (ec.rdata_ex[1] << 8) | (ec.rdata_ex[2]);
@@ -332,9 +332,9 @@ RS_CODE RS_interpret_rdata2_export(){
 
 
     // display result
-
+#if PRINTOUT
     printf("count %d (%d)\n", cnt_now, cnt_diff);
-
+#endif
     uint64_t first_15[15] = {0};
     uint64_t last_15[15] = {0};
 
@@ -353,11 +353,11 @@ RS_CODE RS_interpret_rdata2_export(){
     RS_stringify_array(str_first15, 15, first_15);
 
     RS_stringify_array(str_last15, 15, last_15);
-
+#if PRINTOUT
     printf("rdata length = %d: %s %s\n", rlen, str_first15, str_last15);
 
     printf("head %x csum %llx  csum cal %llx (%d)\n", head, csum, csum_cal, csum_check);
-
+#endif
     if (csum_check != TRUE){
         monitor_csum_fail += 1;
     }

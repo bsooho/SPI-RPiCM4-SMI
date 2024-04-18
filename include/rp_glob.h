@@ -73,7 +73,9 @@
 #define DEBUG_LEVEL 1
 
 
+// 1 이면 프린트 함
 
+#define PRINTOUT 0
 
 
 /*
@@ -98,7 +100,14 @@
 // CMD_TYPE 0, 1, 2, 3
 // 데이터 준비 여부를 표시하기 위해 클라이언트에 보내는 데이터 길이가
 // 4 byte 를 나타내기 위해 정의
+
+// command 할 때
+// 성공여부 1 byte
+// 길이 1 byte
+// 나머지 0, 0
+
 #define FLAG_SET 4
+
 
 #define CMD_BUFF_LEN 10
 
@@ -167,13 +176,36 @@
 #define MAX_EXPORT_BYTE_LEN 140000 
 
 #define CMD_TYPE_1_LEN         BF_DATA_LEN + RMS_DATA
-#define CMD_TYPE_1_BYTE_LEN    CMD_TYPE_1_LEN * DOUBLE_T
+#define CMD_TYPE_1_BYTE_LEN    (CMD_TYPE_1_LEN) * DOUBLE_T
 
 #define CMD_TYPE_2_LEN         MIC_DATA + BF_MIC_DATA
-#define CMD_TYPE_2_BYTE_LEN    CMD_TYPE_2_LEN * DOUBLE_T
+#define CMD_TYPE_2_BYTE_LEN    (CMD_TYPE_2_LEN) * DOUBLE_T
 
 #define CMD_TYPE_3_LEN         BF_DATA_LEN + RMS_DATA + MIC_DATA + BF_MIC_DATA
-#define CMD_TYPE_3_BYTE_LEN    CMD_TYPE_3_LEN * DOUBLE_T
+#define CMD_TYPE_3_BYTE_LEN    (CMD_TYPE_3_LEN) * DOUBLE_T
+
+
+/*
+
+
+    COMMAND DATA
+
+
+*/
+
+//  최대  219 byte
+//  73 * 3
+
+#define MAX_COMMAND_BYTE_LEN 256
+
+#define COMMAND_READ_LEN 1 * RS_WORD
+
+#define CMD_TYPE_XYZ_LEN 73 * RS_WORD
+#define CMD_TYPE_IIR_LEN 11 * RS_WORD
+#define CMD_TYPE_COM_LEN 4 * RS_WORD
+
+
+
 
 /*
 
@@ -185,6 +217,6 @@ static char* spidev0 = "/dev/spidev0.0";
 static char* spidev1 = "/dev/spidev1.0";    
 
 static char* export_sock = "/tmp/fpga_stream_export.sock";
-
+static char* command_sock = "/tmp/fpga_stream_command.sock";
 
 #endif

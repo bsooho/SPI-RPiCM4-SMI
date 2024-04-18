@@ -99,9 +99,15 @@ RS_CODE RS_stream_main(){
     // 원래 코드와 동일하게
     // spi1 관련 통신 진행함
 
+#if VERSION_MINOR == 1
 
     rs_result = RS_register_spi1();
 
+#elif VERSION_MINOR == 2
+
+    rs_result = RS_register_spi1_2();
+
+#endif
 
 
     if (rs_result != RS_OKAY){
@@ -391,10 +397,10 @@ void RS_gpio_interrupt_handler(int gpio, int level, uint32_t tick){
     // 25 * 40ms == 1s
 
     if (gv.cnt >= 25){
-
+#if PRINTOUT
         printf("gv.cnt: %d\n", gv.cnt);
         printf("gpio: %d, level: %d\n", gpio, level);
-
+#endif
         gv.cnt = 0;
 
 
@@ -611,10 +617,10 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 
 #if EXPORT_ALL
 
-
+#if PRINTOUT
     printf("gv.cnt: %d\n", gv.cnt);
     printf("gpio: %d, level: %d\n", gpio, level);
-
+#endif
     if(gv.cnt == 25){
 
         gv.cnt = 0;
@@ -651,10 +657,10 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 
 
     if ((gv.cnt % 5) == 0){
-
+#if PRINTOUT
         printf("gv.cnt: %d\n", gv.cnt);
         printf("gpio: %d, level: %d\n", gpio, level);
-
+#endif
         if(gv.cnt == 25){
 
             gv.cnt = 0;
@@ -691,10 +697,10 @@ void RS_gpio_interrupt_handler2(int gpio, int level, uint32_t tick){
 
 
     if (gv.cnt >= 25){
-
+#if PRINTOUT
         printf("gv.cnt: %d\n", gv.cnt);
         printf("gpio: %d, level: %d\n", gpio, level);
-
+#endif
         gv.cnt = 0;
 
         // 여기서 비트 연산으로 데이터를 정리하고
@@ -1033,9 +1039,9 @@ RS_CODE RS_interpret_rdata_general(){
     int rlen = gv.rdata_len;
 
     int wlen = rlen / RS_WORD;
-
+#if PRINTOUT
     printf("rlen: %d\n", rlen);
-
+#endif
     // head
 
     int head = (gv.rdata[0] << 16) | (gv.rdata[1] << 8) | (gv.rdata[2]);
@@ -1083,9 +1089,9 @@ RS_CODE RS_interpret_rdata_general(){
 
 
     // display result
-
+#if PRINTOUT
     printf("count %d (%d)\n", cnt_now, cnt_diff);
-
+#endif
     char first_15[15] = {0};
     char last_15[15] = {0};
 
@@ -1097,11 +1103,11 @@ RS_CODE RS_interpret_rdata_general(){
 
 
     }
-
+#if PRINTOUT
     printf("rdata length = %d: %s %s\n", rlen, first_15, last_15);
 
     printf("head %x csum %x  csum cal %x (%d)\n", head, csum, csum_cal, csum_check);
-
+#endif
     // BF RMS data
     if (gv.CMD_TYPE == 1){
 
