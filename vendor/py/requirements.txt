@@ -1,4 +1,0 @@
-matplotlib
-spidev
-numpy
-RPi.GPIO
