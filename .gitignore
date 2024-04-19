@@ -5,6 +5,7 @@ myenv
 .vscode
 log/log.txt
 log/sock.txt
+log/client.txt
 pigpio-master
 master.zip
 __pycache__
