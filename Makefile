@@ -25,7 +25,7 @@ all:
 
 v1: $(V1_OBJ)
 
-	gcc $(GCC_FLAGS) $(INCLUDES) -o v1.run src/main.c $(V1_OBJ) $(LIBS)
+	gcc $(GCC_FLAGS) $(INCLUDES) $(LINKS) $(LOADS) -o v1.run src/main.c $(V1_OBJ) $(LIBS)
 
 
 client: $(OBJ_CLIENT)
