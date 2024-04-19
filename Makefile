@@ -5,7 +5,11 @@ GCC_FLAGS := -Ofast -Wall
 
 GCC_OBJ_FLAGS := -Ofast -Wall -c
 
-INCLUDES := -I./include
+INCLUDES := -I./include -I./include/pigpio
+
+LINKS := -L./lib/pigpio
+
+LOADS := -Wl,-rpath=./lib/pigpio
 
 LIBS := -lrt -lpthread -lpigpio -lc 
 
@@ -67,8 +71,8 @@ render_client.o:
 clean:
 
 
-	sudo rm -r *.run *.test *.o log/log.txt log/sock.txt
+	sudo rm -r *.run *.test *.o log/log.txt log/sock.txt log/client.txt
 
 clean-log:
 
-	sudo rm -r log/log.txt log/sock.txt
+	sudo rm -r log/log.txt log/sock.txt log/client.txt
