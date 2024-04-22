@@ -5,7 +5,7 @@
 [Requirements](#requirements)\
 [How to run](#how-to-run)\
 [Socket Export Protocol](#socket-export-protocol)\
-[Client Include](#client-include)\
+[Client How-to](#client-how-to)\
 [Client Example (CMD)](#client-example-cmd)\
 [Client Example (C)](#client-example-c)\
 [Notes](#notes)\
@@ -205,26 +205,44 @@ RESPONSE:
 
 ```
 
-### Client Include 
+### Client (How-to)
 
 아래는 타 클라이언트 활용법임
 
 ```shell
 
 필요한 파일:
-    include/rp_glob.h
-    include/rprender/rprender.h
-    include/rprender/client/client.h
-    render/client/client.c
+    client/rp_glob.h (symlink to include/rp_glob.h)
+    client/client_core.h
+    client/client.c
+
+symlink 생성 방법:
+
+    ln -s ${기존_rp_glob.h_경로} ${rp_glob.h_symlink_경로}
+
+    ex) 
+        cd client
+
+        ln -s ../include/rp_glob.h rp_glob.h
+
+    이렇게 하면 한 군데 (include/rp_glob.h) 에서만 전역 변수를 수정하고
+    여러 곳에서 동시에 변경 사항 적용을 받을 수 있음
+
+컴파일:
+
+    cd client
+
+    make
 
 
 ```
 
 ```c
 
-// 사용을 원할 시 아래 파일만 include 하면 됨
-// 빌드 예시는 make client 참조
-#include "rprender/client/client.h"
+// 사용을 원할 시 해당 디렉토리 내에 rp_glob.h 심볼릭 링크 파일을 만들고
+// 아래 파일만 include 하면 됨
+
+#include "client_core.h"
 
 
 
