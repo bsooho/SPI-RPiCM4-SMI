@@ -15,7 +15,6 @@ LIBS := -lrt -lpthread -lpigpio -lc
 
 V1_OBJ := rpspi.o v1_stream.o v1_stream_reg.o v1_export.o v1_command.o v1_utils.o
 
-OBJ_CLIENT := render_client.o 
 
 all:
 
@@ -28,14 +27,10 @@ v1: $(V1_OBJ)
 	gcc $(GCC_FLAGS) $(INCLUDES) $(LINKS) $(LOADS) -o v1.run src/main.c $(V1_OBJ) $(LIBS)
 
 
-client: $(OBJ_CLIENT)
-
-	gcc $(GCC_FLAGS) $(INCLUDES) -o client.run render/client/main.c $(OBJ_CLIENT)
 
 rpspi.o:
 
 	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o rpspi.o src/rpspi.c
-
 
 
 v1_stream.o:
@@ -63,16 +58,11 @@ v1_utils.o:
 
 
 
-render_client.o:
-
-	gcc $(GCC_OBJ_FLAGS) $(INCLUDES) -o render_client.o render/client/client.c
-
-
 clean:
 
 
-	sudo rm -r *.run *.test *.o log/log.txt log/sock.txt log/client.txt
+	sudo rm -r *.run *.test *.o log/log.txt log/sock.txt 
 
 clean-log:
 
-	sudo rm -r log/log.txt log/sock.txt log/client.txt
+	sudo rm -r log/log.txt log/sock.txt 

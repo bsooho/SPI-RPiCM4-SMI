@@ -1,6 +1,6 @@
 
-#ifndef _RPRENDER_H_
-#define _RPRENDER_H_
+#ifndef _RPCLIENT_CORE_H_
+#define _RPCLIENT_CORE_H_
 
 
 
@@ -76,6 +76,32 @@ void RPCL_example_read_iircoef(char* test);
 void RPCL_example_update_common(char* test);
 
 void RPCL_example_read_common(char* test);
+
+
+
+
+extern int EXPORT_FD;
+extern int COMMAND_FD;
+
+
+
+int RPCL_init_connection(char* addr);
+
+
+int RPCL_get_export(char* cmd, uint8_t* read_bytes);
+
+
+int RPCL_send_command(char* cmd, uint8_t* req, uint8_t* response);
+
+
+void RPCL_log_clientln(char* log);
+
+void RPCL_get_current_time_string(char* tstr);
+
+void RPCL_stringify_array_u8(char* strarray, int arr_len, uint8_t* arr);
+
+void RPCL_msleep(long ms);
+
 
 
 #endif
