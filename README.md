@@ -13,7 +13,7 @@
 
 ## Architecture
 
-최초 개발은 아래 내용 전체가 python으로 작성됨.\
+최초 개발은 아래 내용 전체가 python으로 작성됨. (Python original src 폴더)\
 1.FPGA와 SPI 통신\
 2.데이터 검증/정리 (CSUM 확인)\
 3.이미지 및 소리데이터 보여주기 위한 렌더링
