@@ -216,7 +216,7 @@ if gv.IS_SET_BPF == 1:
 
 	#20k ~ 30kHz BW BPF
 	if gv.IS_IIR_COEF_20_30 == 1:
-		coef_b1 = 0xA # 1010  0 = minus, 1 = plus
+		coef_b1 = 0x6 # 0110  0 = minus, 1 = plus
 		coef_gain = 4 #1563
 		coef_gain = int(coef_gain * gv.GAIN)
 		coef_a1a2 = [-41416, 58510, -47335, 59339, -37733, 62346, -51992, 63192]	
