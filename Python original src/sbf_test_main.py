@@ -309,7 +309,7 @@ pow_constant  = pow_constant  / 2**23
 #integer u48 -> u13.35 : /2^35
 pow_rms_constant = 1/(2**35  * BF_BLOCK_LEN)
 
-if gv.CMD_TYPE == 1 or gv.CMD_TYPE == 2
+if gv.CMD_TYPE == 1 or gv.CMD_TYPE == 2:
     fig.canvas.draw()
 
 while True:
